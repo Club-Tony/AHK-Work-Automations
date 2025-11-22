@@ -21,8 +21,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode, 2 ; allows for partial window title matches
 Esc::ExitApp
 SetKeyDelay 150
-
 #IfWinActive, Intra Desktop Client - Assign Recip
+
 !t::
     MouseClick, left, 300, 120
     Sleep 200
@@ -31,9 +31,9 @@ SetKeyDelay 150
     Send {space}it-
     Sleep 250
     SendInput, {Enter}
-    Sleep 500
+    Sleep 1000
     SendInput, {Down}
-    Sleep 500
+    Sleep 1000
     MouseClick, left, 1035, 185
     Sleep 300
     MouseClick, left, 1060, 185
@@ -74,6 +74,8 @@ SetKeyDelay 150
     MouseMove, 2050, 1025
     Sleep 100
     SendInput, {Enter}
+    Sleep 100
+    MouseMove, 945, 70
 Return
 
 #IfWinActive, Intra Desktop Client - Update

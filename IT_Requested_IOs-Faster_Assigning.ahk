@@ -17,24 +17,15 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 Esc::ExitApp
 #IfWinActive, Intra Desktop Client - Assign Recip
-SetKeyDelay 50
-global cancelLoop := false
+SetKeyDelay 100
 
 !s::
-    cancelLoop := false
+    CloseParentTicketGeneral()
+    CloseParentTicketBYOD()
     Sleep 250
-    MouseMove, 930, 830
+    MouseClick, left, 930, 830, 2
     Sleep 500
-    MouseClick, left
-    Sleep 250
-    MouseMove, 925, 850
-    Sleep 250
-    MouseClick, left
-Return
-
-; Cancel/stop key        
-^Esc::
-    cancelLoop := true
+    MouseClick, left, 925, 850
 Return
 
 Enter::
@@ -42,20 +33,13 @@ Enter::
     Sleep 250
     Send, {Down}
     Sleep 250
-    MouseMove 200, 245
-    Sleep 250
-    MouseClick, left, , , 2
+    MouseClick, left, 200, 245, 2
 
     ; insert text detection here, where upon text detected under mouse, wait for it to finish and then send so it mimicks scanner carriage return
     MouseGetPos, , , winID, ctrlUnderMouse
     ControlGetText, oldText, %ctrlUnderMouse%, ahk_id %winID%
 
     Loop {
-        if (cancelLoop)
-        {
-            Break
-        }
-        
         Sleep 100
         ControlGetText, newText, %ctrlUnderMouse%, ahk_id %winID%
         if (newText != oldText && newText != "") {
@@ -70,4 +54,26 @@ Enter::
     }
 Return
 
-#IfWinActive, Intra Desktop Client - Assign Recip ; Cleanly closes out Active window state, freeing alt+s for global use
+#IfWinActive
+
+CloseParentTicketGeneral() {
+    ; Ensure the general parent ticket script is not running because it registers its own Enter hotkeys.
+    SetTitleMatchMode, 2
+    DetectHiddenWindows, On
+    WinGet, conflictingPID, PID, Parent_Ticket_Creation-(GENERAL)
+    if (conflictingPID)
+        Process, Close, %conflictingPID%
+    DetectHiddenWindows, Off
+    SetTitleMatchMode, 1
+}
+
+CloseParentTicketBYOD() {
+    ; Ensure the BYOD parent ticket script is not running because it registers its own Enter hotkeys.
+    SetTitleMatchMode, 2
+    DetectHiddenWindows, On
+    WinGet, conflictingPID, PID, Parent_Ticket_Creation-(BYOD)
+    if (conflictingPID)
+        Process, Close, %conflictingPID%
+    DetectHiddenWindows, Off
+    SetTitleMatchMode, 1
+}

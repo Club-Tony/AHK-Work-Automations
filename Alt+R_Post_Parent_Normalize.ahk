@@ -38,7 +38,9 @@ SetKeyDelay 150
         {
             MouseClick, WheelUp
         }
+    MouseClick, left, 40, 1300, 2
+    Sleep 100
     MouseClick, left, 200, 245, 2
 Return
 
-#IfWinActive, Intra Desktop Client - Assign Recip
+#IfWinActive
