@@ -1,5 +1,6 @@
 #Requires AutoHotkey v1
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#SingleInstance, Force  ; Reload without prompt when Esc is pressed.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 

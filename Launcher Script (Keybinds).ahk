@@ -1,6 +1,7 @@
 #Requires AutoHotkey v1
 #NoEnv ; Prevents Unnecessary Environment Variable lookup
 #Warn ; Warn All (All Warnings Enabled)
+#SingleInstance, Force  ; Reload without prompt when Esc is pressed.
 SendMode Input ; Send works as SendInput
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
@@ -29,3 +30,14 @@ Return
     Sleep 10000
     Tooltip
 Return
+
+; Launch: Intra SSJ Search ; Keybind: Ctrl+Alt+F
+^!f::
+    Run, C:\Users\daveyuan\Documents\AutoHotkey\Intra_Desktop_Search_Shortcuts.ahk
+    Sleep 150
+    Tooltip, Intra SSJ Search`nCtrl+Alt+F: Load and reload search script`nAlt+D: Docksided items`nCtrl+Alt+D: Delivered items`nAlt+O: On-shelf items`nAlt+A: Arrived at BSC`nAlt+P: Pickup from BSC
+    Sleep 7000
+    Tooltip
+Return
+
+^Esc::Reload
