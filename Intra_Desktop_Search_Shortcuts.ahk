@@ -38,27 +38,6 @@ IsIntraSearchWin()
     MouseClick, left, % DocksidedPreset.x, % DocksidedPreset.y
     Sleep 500
     MouseClick, left, % StatusSelect.x, % StatusSelect.y
-    Sleep 250
-    SendInput, {Enter}
-    Sleep 500
-    WinWait, Search Results:, , 5
-    if (ErrorLevel)
-        return
-    WinActivate, Search Results:
-    WinWaitActive, Search Results:, , 2
-    Sleep 100
-    SendInput, !{Space}
-    Sleep 100
-    SendInput, s
-    Sleep 100
-    SendInput, {Right}
-    Sleep 100
-    SendInput, {Down}
-    MouseMove, 2050, 1025
-    Sleep 100
-    SendInput, {Enter}
-    Sleep 100
-    MouseMove, 945, 70
 return
 
 ^!d::  ; Delivered items

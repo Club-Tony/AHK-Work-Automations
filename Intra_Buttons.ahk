@@ -120,7 +120,7 @@ return
     SendInput, {Backspace}
     Sleep 120
     SendInput, Order:{Space}
-    Tooltip, Alt+Space to enter building code
+    Tooltip, Alt+Space to enter building code + recipient alias.
     SetTimer, HideSpecialTooltip, -4000
 return
 
@@ -161,19 +161,45 @@ return
     Sleep 150
     SendInput, ^{End}
     Sleep 150
-    ClickAtRatio(BuildingFieldXR, BuildingFieldYR)
+    buildingText := CopyFieldText("", BuildingFieldXR, BuildingFieldYR)
     Sleep 150
-    SendInput, ^a
-    Sleep 80
-    SendInput, ^c
-    Sleep 120
     ClickAtRatio(SpecialInstrXR, SpecialInstrYR)
     Sleep 100
-    SendInput, {space 2}
+    SendInput, {Space 2}
     Sleep 100
+    ClipSaved := ClipboardAll
+    Clipboard := buildingText
     SendInput, ^v
     Sleep 100
     SendInput, {Space 2}
+    Sleep 150
+    ; capture alias after finishing and return focus to Special Instructions
+    ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
+    Sleep 150
+    SendInput, ^{Home}
+    Sleep 200
+    ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
+    Sleep 150
+    ClickAtRatio(AliasFieldXR, AliasFieldYR, 2)
+    Sleep 150
+    SendInput, ^a
+    Sleep 100
+    SendInput, ^c
+    ClipWait, 0.5
+    aliasText := Clipboard
+    Sleep 150
+    ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
+    Sleep 150
+    SendInput, ^{End}
+    Sleep 200
+    ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
+    Sleep 150
+    ClickAtRatio(SpecialInstrXR, SpecialInstrYR)
+    Clipboard := aliasText  ; leave alias on clipboard after finishing
+    Sleep 100
+    SendInput, ^v
+    Sleep 100
+    SendInput, @
 return
 
 EnsureIntraWindow()

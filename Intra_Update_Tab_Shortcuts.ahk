@@ -59,6 +59,15 @@ return
     MouseClick, left, 70, 1345, 2
     Sleep 200
     ClickScaled(StatusBar)
+    Sleep 100
+    Send, 1
+    Sleep 100
+    SendInput, {enter} 
+
+^!d::
+    MouseClick, left, 70, 1345, 2
+    Sleep 200
+    ClickScaled(StatusBar)
     Sleep 200
     Loop 25 {
         MouseClick, WheelUp
