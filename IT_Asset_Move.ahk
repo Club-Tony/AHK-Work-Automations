@@ -25,30 +25,73 @@ SetKeyDelay 150
 #IfWinActive, Intra Desktop Client - Assign Recip
 
 !t::
-    MouseClick, left, 300, 120
-    Sleep 200
+    ; Attempt parent ticket creation first
     MouseClick, left, 130, 850, 2
-    Sleep 300
+    Sleep 250
     Send {space}it-
     Sleep 250
     SendInput, {Enter}
-    Sleep 1000
+    Sleep 2500
     SendInput, {Down}
-    Sleep 1000
+    Sleep 250
     MouseClick, left, 1035, 185
-    Sleep 300
+    Sleep 250
     MouseClick, left, 1060, 185
-    Sleep 300
+    Sleep 250
     MouseClick, left, 1100, 365, 2
-    Sleep 500
+    Sleep 250
     Send mid
-    Sleep 300
+    Sleep 250
     SendInput, {Enter}
-    Sleep 200
+    Sleep 250
     MouseClick, left, 1100, 650, 2
-    Sleep 200
+    Sleep 250
     Send SEA124
-    Sleep 200
+    Sleep 250
+    MouseClick, left, 200, 245, 2
+    Sleep 250
+    SendInput, ^n
+    Sleep 1000
+    Send, {F5}
+    Sleep 5000
+    MouseClick, left, 130, 850, 2
+    Sleep 250
+    Send {space}it-
+    Sleep 250
+    SendInput, {Enter}
+    Sleep 2000
+    SendInput, {Down}
+    Sleep 250
+    MouseClick, left, 1100, 365, 2
+    Sleep 250
+    Send mid
+    Sleep 250
+    SendInput, {Enter}
+    Sleep 250
+    MouseClick, left, 725, 190, 2  ; Enable Parent Item #
+    Sleep 250
+    ; Wait for scan/input into the Parent Item field before continuing.
+    ControlGetFocus, focusedCtrl, A
+    if (focusedCtrl != "")
+    {
+        ControlGetText, initialText, %focusedCtrl%, A
+        changed := false
+        Loop 150  ; ~30 seconds total at 200 ms intervals
+        {
+            Sleep 200
+            ControlGetText, newText, %focusedCtrl%, A
+            if (newText != initialText && newText != "")
+            {
+                changed := true
+                break
+            }
+        }
+        if (!changed)
+            return
+    }
+    
+    ; Resume rest of script
+    Sleep 250
     SendInput, ^f
     Sleep 750
     MouseClick, left, 110, 725
@@ -82,7 +125,7 @@ Return
 #IfWinActive, Intra Desktop Client - Update
 !t::
     MouseClick, left, 190, 205
-    Sleep 200
+    Sleep 250
     Loop, 10
     {
         MouseClick, WheelUp

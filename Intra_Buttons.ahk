@@ -176,17 +176,7 @@ return
     ; capture alias after finishing and return focus to Special Instructions
     ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
     Sleep 150
-    SendInput, ^{Home}
-    Sleep 200
-    ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
-    Sleep 150
-    ClickAtRatio(AliasFieldXR, AliasFieldYR, 2)
-    Sleep 150
-    SendInput, ^a
-    Sleep 100
-    SendInput, ^c
-    ClipWait, 0.5
-    aliasText := Clipboard
+    aliasText := CopyFieldText("Top", AliasFieldXR, AliasFieldYR)
     Sleep 150
     ClickAtRatio(NeutralClickXR, NeutralClickYR, 2)
     Sleep 150
