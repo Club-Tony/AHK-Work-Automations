@@ -22,10 +22,20 @@ LoadSavedSearchBtn := {x: 120, y: 720}
 DocksidedPreset := {x: 200, y: 600}
 StatusSelect := {x: 375, y: 160}
 
-^Esc::Reload
+abortHotkey := false
+
+Esc::
+    abortHotkey := true
+return
+
+^Esc::
+    abortHotkey := true
+    Reload
+return
 
 #If ( WinActive("Intra Desktop Client - Update") || WinActive("Search - General") )
 !p::
+    ResetAbort()
     MouseClick, left, 70, 1345, 2
     Sleep 200
     ClickScaled(StatusBar)
@@ -39,7 +49,9 @@ StatusSelect := {x: 375, y: 160}
         Sleep 20
     }
     ClickScaled(FirstDropdown)
-    Sleep 3000
+    Sleep 5000
+    if (AbortRequested())
+        return
     SendInput, ^f
     Sleep 1500
     MouseClick, left, % LoadSavedSearchBtn.x, % LoadSavedSearchBtn.y
@@ -55,14 +67,29 @@ StatusSelect := {x: 375, y: 160}
     SendInput, {Enter}
 return
 
+!o::
+    ResetAbort()
+    SendInput, ^f
+    Sleep 300
+    if (AbortRequested())
+        return
+    Hotkey, !o, Off
+    SendPlay, !o  ; use SendPlay so the $!o hotkey in the search script sees it
+    Hotkey, !o, On
+return
+
 !d::
     MouseClick, left, 70, 1345, 2
-    Sleep 200
+    Sleep 400
     ClickScaled(StatusBar)
-    Sleep 100
-    Send, 1
-    Sleep 100
-    SendInput, {enter} 
+    Sleep 200
+    Loop 25 {
+        MouseClick, WheelUp
+        Sleep 20
+    }
+    ClickScaled(FirstDropdown)
+    Sleep 200
+return
 
 ^!d::
     MouseClick, left, 70, 1345, 2
@@ -110,4 +137,16 @@ ClickScaled(coord, clicks := 1)
     tx := Floor(winW * coord.rx)
     ty := Floor(winH * coord.ry)
     MouseClick, left, %tx%, %ty%, clicks
+}
+
+ResetAbort()
+{
+    global abortHotkey
+    abortHotkey := false
+}
+
+AbortRequested()
+{
+    global abortHotkey
+    return abortHotkey
 }
