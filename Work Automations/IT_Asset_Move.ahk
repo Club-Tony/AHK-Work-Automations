@@ -31,7 +31,7 @@ SetKeyDelay 150
     Send {space}it-
     Sleep 250
     SendInput, {Enter}
-    Sleep 2500
+    Sleep 2000
     SendInput, {Down}
     Sleep 250
     MouseClick, left, 1035, 185
@@ -51,9 +51,9 @@ SetKeyDelay 150
     MouseClick, left, 200, 245, 2
     Sleep 250
     SendInput, ^n
-    Sleep 1000
+    Sleep 750
     Send, {F5}
-    Sleep 5000
+    Sleep 3500
     MouseClick, left, 130, 850, 2
     Sleep 250
     Send {space}it-
@@ -68,7 +68,13 @@ SetKeyDelay 150
     Sleep 250
     SendInput, {Enter}
     Sleep 250
+    MouseClick, left, 300, 120  ; Click print label button
+    Sleep 250
     MouseClick, left, 725, 190, 2  ; Enable Parent Item #
+    Sleep 250
+    ToolTip, Scan parent label to continue script
+    Sleep 4000
+    ToolTip
     Sleep 250
     ; Wait for scan/input into the Parent Item field before continuing.
     ControlGetFocus, focusedCtrl, A
@@ -91,48 +97,32 @@ SetKeyDelay 150
     }
     
     ; Resume rest of script
-    Sleep 250
+    Sleep 500
     SendInput, ^f
     Sleep 750
     MouseClick, left, 110, 725
     Sleep 300
-    SendInput, {Down}
-    Sleep 300
     MouseClick, left, 185, 575
-    Sleep 300
-    SendInput, {Enter}
-    Sleep 300
-    MouseClick, left, 875, 770 ; Clicks Search, allow time to load, implement 10 sec timeout.
-    WinWait, Search Results:, , 8 
+    Sleep 500
+    MouseClick, left, 875, 770 ; Click Search
+    Sleep 1500
+    WinWait, Search Results:, , 10
     if ErrorLevel
     {
         Return    
-    } 
+    }
+    Sleep 200
     SendInput, !{space}
-    Sleep 100
+    Sleep 300
     SendInput, s
-    Sleep 100
+    Sleep 300
     SendInput, {Right}
-    Sleep 100
+    Sleep 300
     SendInput, {Down}
     MouseMove, 2050, 1025
-    Sleep 100
+    Sleep 300
     SendInput, {Enter}
-    Sleep 100
+    Sleep 300
     MouseMove, 945, 70
 Return
-
-#IfWinActive, Intra Desktop Client - Update
-!t::
-    MouseClick, left, 190, 205
-    Sleep 250
-    Loop, 10
-    {
-        MouseClick, WheelUp
-        Sleep 50
-    }
-    Sleep 150
-    MouseClick, left, 190, 228
-Return
-
-#IfWinActive ; Clears context as to remove this condition that can affect other hotkeys
+#If

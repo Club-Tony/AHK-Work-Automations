@@ -6,24 +6,11 @@ SendMode Input ; Send works as SendInput
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 SetTitleMatchMode, 2
+; Scope: Intra Assign/Update windows; focus helpers only (tooltip moved to ToolTips.ahk).
+
+^Esc::Reload
 #If ( WinActive("Intra Desktop Client - Assign Recip")
     || WinActive("Intra Desktop Client - Update") )
-
-^!t::
-    Tooltip, SSJ-Intra Keybinds`nIntra - Assign Recip Hotkeys:`nFaster Assigning: Alt+S`nBYOD Parent Ticket: Alt+P`nParent Ticket (General): Ctrl+Alt+P`nIT Asset Move: Alt+T`nClear + Toggle/Print Button Normalize: Alt+R`nSearch Window Quick Resize: Alt+Space`nFocus Scan Field: Alt+E`nFocus Alias Field: Alt+A`nFocus Name Field: Alt+N`nFocus Package Type: Alt+1`nFocus BSC Location: Alt+2`nToggle Item Var + Apply All: Alt+D`nIntra - Update Hotkeys:`nAlt+P: Status Select -> Pickup from BSC`nAlt+D: Status Select -> Delivery`nAlt+C: Clear All`nCTRL+ALT+T: SHOWS TOOLTIP AGAIN
-    Hotkey, Esc, CloseIntraTooltip, On
-    SetTimer, TooltipTimeout, -10000
-Return
-
-CloseIntraTooltip:
-    SetTimer, TooltipTimeout, Off
-    Tooltip
-    Hotkey, Esc, CloseIntraTooltip, Off
-Return
-
-TooltipTimeout:
-    Gosub, CloseIntraTooltip
-Return
 
 !e:: ; focus scan field
     MouseClick, Left, 200, 245, 2 

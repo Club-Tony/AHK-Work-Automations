@@ -7,6 +7,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode, 2  ; Partial matches for Intra window names.
 CoordMode, Mouse, Window  ; Use window-relative coordinates.
 
+; Scope: Update tab + Search window helpers; abort flag lets Esc/cancel safely bail.
 ; More Coordinates (ratios for Update window so they scale with size/position)
 ; Current client size from latest window spy: w=1718, h=1360
 baseW := 1718.0
@@ -16,6 +17,8 @@ PickupFromBSC := {rx: 174/baseW, ry: 328/baseH}
 FirstDropdown := {rx: 185/baseW, ry: 225/baseH}
 PackageType := {x: 1375, y: 360}    ; absolute for Update window
 BSCLocation := {x: 1375, y: 652}    ; absolute for Update window
+PrintLabel := {rx: 300/baseW, ry: 120/baseH}
+ScanField := {rx: 200/baseW, ry: 245/baseH}
 
 ; Borrowed from Intra_Desktop_Search_Shortcuts (Search - General window)
 LoadSavedSearchBtn := {x: 120, y: 720}
@@ -24,16 +27,16 @@ StatusSelect := {x: 375, y: 160}
 
 abortHotkey := false
 
-Esc::
-    abortHotkey := true
-return
-
 ^Esc::
     abortHotkey := true
     Reload
 return
 
 #If ( WinActive("Intra Desktop Client - Update") || WinActive("Search - General") )
+Esc::
+    abortHotkey := true
+return
+
 !p::
     ResetAbort()
     MouseClick, left, 70, 1345, 2
@@ -49,7 +52,7 @@ return
         Sleep 20
     }
     ClickScaled(FirstDropdown)
-    Sleep 5000
+    Sleep 3000
     if (AbortRequested())
         return
     SendInput, ^f
@@ -67,20 +70,9 @@ return
     SendInput, {Enter}
 return
 
-!o::
-    ResetAbort()
-    SendInput, ^f
-    Sleep 300
-    if (AbortRequested())
-        return
-    Hotkey, !o, Off
-    SendPlay, !o  ; use SendPlay so the $!o hotkey in the search script sees it
-    Hotkey, !o, On
-return
-
 !d::
     MouseClick, left, 70, 1345, 2
-    Sleep 400
+    Sleep 200
     ClickScaled(StatusBar)
     Sleep 200
     Loop 25 {
@@ -111,7 +103,13 @@ return
 !c::
     MouseClick, left, 70, 1345, 2
     Sleep 200
-    SendInput, {Enter}
+    Send, {Enter}
+    Sleep 200
+    Loop, 2
+    {
+        SendInput, {Esc}
+        Sleep 50
+    }
     Sleep 200
     WinGetPos,,, winW, winH, A
     mX := Floor(winW * StatusBar.rx)
@@ -127,6 +125,25 @@ return
 
 !2::
     MouseClick, left, % BSCLocation.x, % BSCLocation.y
+return
+
+!3::
+    ClickScaled(PrintLabel)
+    Sleep 150
+    ClickScaled(ScanField, 2)
+return
+
+!s::
+    ClickScaled(StatusBar)
+return
+
+!v::
+    MouseClick, left, 70, 1345, 2
+    Sleep 200
+    ClickScaled(StatusBar)
+    Sleep 200
+    SendInput, v
+    Sleep 200
 return
 #If
 

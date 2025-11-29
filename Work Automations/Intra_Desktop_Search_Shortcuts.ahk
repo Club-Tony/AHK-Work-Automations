@@ -188,4 +188,8 @@ return
     Sleep 100
     MouseMove, 945, 70
 return
+
+!s::
+    MouseClick, left, % StatusSelect.x, % StatusSelect.y
+return
 #If
