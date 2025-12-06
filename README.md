@@ -1,5 +1,4 @@
-# Include all files in your "C:\Users\ %LocalUser% \Documents\AutoHotkey" Folder
-### Also suggest adding shortcuts to the following files into RunDiag (Win+R) - Shell:Startup as they don't launch through Launcher Script: 
+## Suggest adding shortcuts to the following files into RunDiag (Win+R) - Shell:Startup as they don't launch through Launcher Script: 
 #### "Launcher Script (Keybinds)"
 #### "Alt+Q Map to Alt+F4"
 #### "Alt+R_Post_Parent_Normalize"
