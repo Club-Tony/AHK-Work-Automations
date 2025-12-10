@@ -6,6 +6,14 @@ SendMode Input ; Send works as SendInput
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetKeyDelay, 25
 
+/*
+TODO (capture fresh absolute coords at 50% zoom via AHK Window Spy):
+- Intra fields: CostCenter, Alias, SFName, SFPhone, STName, Company, Address1, Address2, STPhone, PostalCode, DeclaredValue
+- WorldShip tabs: (reuse current coords)
+- WorldShip fields: (reuse current coords)
+- Buttons: PersonalButton, BusinessButton
+*/
+
 SetTitleMatchMode, 2
 SetDefaultMouseSpeed, 0
 CoordMode, Mouse, Window
@@ -21,17 +29,17 @@ neutralClickR := {x: 0.895425, y: 0.50683} ; same neutral spot used in Intra_But
 
 ; Intra: Shipping Request Form field coordinates (window-relative pixels at normalized size)
 intraFields := {}
-intraFields.CostCenter    := {x: 410, y: 581}
-intraFields.Alias         := {x: 410, y: 788}
-intraFields.SFName        := {x: 800, y: 880}
-intraFields.SFPhone       := {x: 1040, y: 788}
-intraFields.STName        := {x: 400, y: 1361}
-intraFields.Company       := {x: 800, y: 1360}
-intraFields.Address1      := {x: 410, y: 380}
-intraFields.Address2      := {x: 410, y: 470}
-intraFields.STPhone       := {x: 800, y: 381}
-intraFields.PostalCode    := {x: 1040, y: 470}
-intraFields.DeclaredValue := {x: 410, y: 830} ; note y is 741 if ship from name field closes [Theory]
+intraFields.CostCenter    := {x: 0, y: 0}
+intraFields.Alias         := {x: 0, y: 0}
+intraFields.SFName        := {x: 0, y: 0}
+intraFields.SFPhone       := {x: 0, y: 0}
+intraFields.STName        := {x: 0, y: 0}
+intraFields.Company       := {x: 0, y: 0}
+intraFields.Address1      := {x: 0, y: 0}
+intraFields.Address2      := {x: 0, y: 0}
+intraFields.STPhone       := {x: 0, y: 0}
+intraFields.PostalCode    := {x: 0, y: 0}
+intraFields.DeclaredValue := {x: 0, y: 0}
 
 ; UPS WorldShip coordinates (window-relative pixels)
 worldShipTabs := {}
@@ -59,10 +67,10 @@ worldShipFields.Ref2       := {x: 721, y: 345}
 worldShipFields.DeclVal    := {x: 721, y: 273}
 
 ; Button targets (window-relative pixels)
-PersonalButtonX := 274
-PersonalButtonY := 486
-BusinessButtonX := 365
-BusinessButtonY := 486
+PersonalButtonX := 0
+PersonalButtonY := 0
+BusinessButtonX := 0
+BusinessButtonY := 0
 
 return  ; end of auto-execute section
 
