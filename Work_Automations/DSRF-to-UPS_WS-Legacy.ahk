@@ -24,16 +24,16 @@ neutralClickR := {x: 0.895425, y: 0.50683} ; same neutral spot used in Intra_But
 
 ; Intra: Shipping Request Form field coordinates (window-relative pixels at normalized size)
 intraFields := {}
-intraFields.CostCenter    := {x: 410, y: 581}
+intraFields.CostCenter    := {x: 411, y: 587}
 intraFields.Alias         := {x: 410, y: 885}
 intraFields.SFName        := {x: 800, y: 880}
 intraFields.SFPhone       := {x: 1040, y: 788}
-intraFields.STName        := {x: 400, y: 1361}
-intraFields.Company       := {x: 800, y: 1360}
-intraFields.Address1      := {x: 410, y: 380}
-intraFields.Address2      := {x: 410, y: 470}
-intraFields.STPhone       := {x: 800, y: 381}
-intraFields.PostalCode    := {x: 1040, y: 470}
+intraFields.STName        := {x: 476, y: 1365}
+intraFields.Company       := {x: 980, y: 1368}
+intraFields.Address1      := {x: 473, y: 545}
+intraFields.Address2      := {x: 392, y: 633}
+intraFields.STPhone       := {x: 976, y: 542}
+intraFields.PostalCode    := {x: 1120, y: 633}
 intraFields.DeclaredValue := {x: 410, y: 830} ; note y is 741 if ship from name field closes [Theory]
 
 ; UPS WorldShip coordinates (window-relative pixels)
@@ -175,7 +175,7 @@ Esc::ExitApp
     Sleep 150
     NeutralClick()
     Sleep 250
-    Loop 10
+    Loop 11
         {
             Sleep 25
             SendInput, {WheelDown}
@@ -403,7 +403,7 @@ return
     Sleep 150
     NeutralClick()
     Sleep 250
-    Loop 10
+    Loop 11
         {
             Sleep 25
             SendInput, {WheelDown}
