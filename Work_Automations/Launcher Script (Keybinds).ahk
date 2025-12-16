@@ -58,18 +58,8 @@ Return
 
 ; Launch: Intra SSJ Search ; Keybind: Ctrl+Alt+F
 ^!f::
-    hasAssignRecip := FocusAssignRecipWindow()
-    if (hasAssignRecip) {
-        MouseMove, 200, 245  ; Move cursor to scan field in Assign Recip
-        Sleep 75
-    }
     Run, C:\Users\daveyuan\Documents\GitHub\Repositories\AHK-Automations\Work_Automations\Intra_Desktop_Search_Shortcuts.ahk
     Sleep 150
-    if (hasAssignRecip) {
-        Sleep 250
-        SendInput, ^f
-        Sleep 100
-    }
     TooltipText =
     (
 Intra SSJ Search
@@ -82,9 +72,6 @@ Alt+A: Arrived at BSC
 Alt+P: Pickup from BSC
 Alt+Space: Search Windows Quick Resize
     )
-    if (!hasAssignRecip) {
-        TooltipText .= "`nAssign Recip window not found — loaded shortcuts without sending Ctrl+F."
-    }
     ShowTooltip(TooltipText, 7000)
 Return
 
@@ -283,3 +270,4 @@ CloseWorldShipScripts()
 #If (TooltipActive)
 ~Esc::Gosub HideLauncherTooltip
 #If
+
