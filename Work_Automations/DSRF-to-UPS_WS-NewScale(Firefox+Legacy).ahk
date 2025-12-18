@@ -230,7 +230,7 @@ Esc::ExitApp
     SendInput, %PostalCode%
     Sleep 250
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 2000  ; allow any address book/city-state prompts to settle
+    Sleep 5000  ; allow any address book/city-state prompts to settle
 
     FocusIntraWindow()
     EnsureIntraWindow()
@@ -449,7 +449,7 @@ return
     SendInput, %PostalCode%
     Sleep 250
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 2000  ; allow any address book/city-state prompts to settle
+    Sleep 5000  ; allow any address book/city-state prompts to settle
 
     FocusIntraWindow()
     EnsureIntraWindow()

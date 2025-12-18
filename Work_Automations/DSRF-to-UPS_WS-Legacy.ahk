@@ -190,7 +190,7 @@ PasteBusinessToWorldShip(data)
     PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone)
     Sleep 120
 
-    PastePostalCode(data.PostalCode)
+    PastePostalCode(data.PostalCode, delay)
     PasteDeclaredValue(data.DeclaredValue)
     PasteAliasAndQVn(data.Alias)
 }
@@ -237,7 +237,7 @@ PastePersonalToWorldShip(data)
     PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone)
     Sleep 120
 
-    PastePostalCode(data.PostalCode)
+    PastePostalCode(data.PostalCode, delay)
     PasteDeclaredValue(data.DeclaredValue)
     PasteAliasAndQVn(data.Alias)
 }
@@ -286,7 +286,7 @@ CopyDeclaredValueLegacy(fields, offsetY := 0)
     return value
 }
 
-PastePostalCode(postalCode)
+PastePostalCode(postalCode, ref2Delay := 5000)
 {
     global worldShipFields, worldShipTabs
     ClipSaved := ClipboardAll
@@ -302,7 +302,7 @@ PastePostalCode(postalCode)
     SendInput, %postalCode%
     Sleep 250
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 2000  ; allow any address book/city-state prompts to settle
+    Sleep, %ref2Delay%  ; allow any address book/city-state prompts to settle
     Clipboard := ClipSaved
     ClipSaved := ""
 }

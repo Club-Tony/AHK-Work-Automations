@@ -11,7 +11,7 @@ SetDefaultMouseSpeed, 0
 CoordMode, Mouse, Window
 CoordMode, Caret, Window
 
-; Note: Currently ~6 sec faster than regular speed script
+; Note: Currently ~11 sec faster than regular speed script
 
 ; Window targets
 intraWinTitle := "Intra: Shipping Request Form"
@@ -68,6 +68,7 @@ worldShipFields.Company    := {x: 78,  y: 241}
 worldShipFields.Address1   := {x: 85,  y: 323}
 worldShipFields.Address2   := {x: 85,  y: 364}
 worldShipFields.PostalCode := {x: 215, y: 403}
+worldShipFields.City       := {x: 85,  y: 445}
 worldShipFields.Ref1       := {x: 721, y: 309}
 worldShipFields.Ref2       := {x: 721, y: 345}
 worldShipFields.DeclVal    := {x: 721, y: 273}
@@ -78,6 +79,11 @@ PersonalButtonX := 469
 PersonalButtonY := 338
 BusinessButtonX := 523
 BusinessButtonY := 338
+
+; Timing controls
+fastMode := true
+fastScale := fastMode ? 0.75 : 1
+fastMinSleep := 60
 
 return  ; end of auto-execute section
 
@@ -136,7 +142,7 @@ CollectIntraData(mode)
     payload.Alias      := CopyFieldAt(fields.Alias.x, fields.Alias.y)
     payload.SFName     := CopyFieldAt(fields.SFName.x, fields.SFName.y)
     payload.SFPhone    := CopyFieldAt(fields.SFPhone.x, fields.SFPhone.y)
-    payload.Company    := CopyFieldAt(fields.Company.x, fields.Company.y)
+    payload.Company    := CopyFieldAt(fields.Company.x, fields.Company.y, true) ; company can be intentionally empty
     payload.STName     := CopyFieldAt(fields.STName.x, fields.STName.y)
     payload.Address1   := CopyFieldAt(fields.Address1.x, fields.Address1.y)
     payload.Address2   := CopyFieldAt(fields.Address2.x, fields.Address2.y)
@@ -153,51 +159,54 @@ PasteBusinessToWorldShip(data)
     global worldShipTabs, worldShipFields
     FocusWorldShipWindow()
     EnsureWorldShipTop()
-    Sleep 120
+    FastSleep(100)
 
     MouseClick, left, % worldShipTabs.ShipTo.x, worldShipTabs.ShipTo.y
-    Sleep 120
+    FastSleep(100)
     MouseClick, left, % worldShipTabs.Service.x, worldShipTabs.Service.y
-    Sleep 120
-    PasteFieldAt(worldShipFields.Ref1.x, worldShipFields.Ref1.y, data.CostCenter)
-    Sleep 120
+    FastSleep(100)
+    PasteFieldAt(worldShipFields.Ref1.x, worldShipFields.Ref1.y, data.CostCenter, false, true)
+    FastSleep(90)
 
     MouseClick, left, % worldShipTabs.Service.x, worldShipTabs.Service.y
-    Sleep 120
+    FastSleep(90)
     MouseClick, left, % worldShipTabs.ShipFrom.x, worldShipTabs.ShipFrom.y
-    Sleep 120
-    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, data.SFName)
-    Sleep 120
+    FastSleep(90)
+    fromSnap := CaptureAddressSnapshot()
+    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, data.SFName, true, true)
+    FastSleep(90)
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 5000
-    PasteFieldAt(worldShipFields.SFName.x, worldShipFields.SFName.y, data.SFName)
-    Sleep 120
-    EnsureWorldShipTop()
-    PasteFieldAt(worldShipFields.Ref2.x, worldShipFields.Ref2.y, data.SFName)
-    Sleep 120
-    PasteFieldAt(worldShipFields.SFPhone.x, worldShipFields.SFPhone.y, data.SFPhone)
-    Sleep 120
+    WaitForAddressFill(fromSnap, 2000, 300, 70)
+    FastSleep(80)
+    PasteFieldAt(worldShipFields.SFName.x, worldShipFields.SFName.y, data.SFName, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.Ref2.x, worldShipFields.Ref2.y, data.SFName, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.SFPhone.x, worldShipFields.SFPhone.y, data.SFPhone, false, true)
+    FastSleep(90)
 
     MouseClick, left, % worldShipTabs.ShipTo.x, worldShipTabs.ShipTo.y
-    Sleep 120
+    FastSleep(90)
     MouseClick, left, % worldShipTabs.Service.x, worldShipTabs.Service.y
-    Sleep 120
+    FastSleep(90)
 
     companyName := data.Company != "" ? data.Company : data.STName
-    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, companyName)
-    Sleep 120
+    toSnap := CaptureAddressSnapshot()
+    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, companyName, true, true)
+    FastSleep(90)
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    delay := (companyName = data.Company && companyName != "") ? 2000 : 5000
-    Sleep, %delay%
-    PasteFieldAt(worldShipFields.STName.x, worldShipFields.STName.y, data.STName)
-    Sleep 120
+    waitBudget := (companyName = data.Company && companyName != "") ? 1800 : 3200
+    WaitForAddressFill(toSnap, waitBudget, 400, 70)
+    FastSleep(80)
+    PasteFieldAt(worldShipFields.STName.x, worldShipFields.STName.y, data.STName, false, true)
+    FastSleep(90)
 
-    PasteFieldAt(worldShipFields.Address1.x, worldShipFields.Address1.y, data.Address1)
-    Sleep 120
-    PasteFieldAt(worldShipFields.Address2.x, worldShipFields.Address2.y, data.Address2)
-    Sleep 120
-    PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone)
-    Sleep 120
+    PasteFieldAt(worldShipFields.Address1.x, worldShipFields.Address1.y, data.Address1, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.Address2.x, worldShipFields.Address2.y, data.Address2, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone, false, true)
+    FastSleep(90)
 
     PastePostalCode(data.PostalCode)
     PasteDeclaredValue(data.DeclaredValue)
@@ -209,42 +218,45 @@ PastePersonalToWorldShip(data)
     global worldShipTabs, worldShipFields
     FocusWorldShipWindow()
     EnsureWorldShipTop()
-    Sleep 120
+    FastSleep(100)
 
     MouseClick, left, % worldShipTabs.Service.x, worldShipTabs.Service.y
-    Sleep 120
+    FastSleep(90)
     MouseClick, left, % worldShipTabs.ShipFrom.x, worldShipTabs.ShipFrom.y
-    Sleep 120
-    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, data.SFName)
-    Sleep 120
+    FastSleep(90)
+    fromSnap := CaptureAddressSnapshot()
+    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, data.SFName, true, true)
+    FastSleep(90)
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 5000
-    PasteFieldAt(worldShipFields.SFName.x, worldShipFields.SFName.y, data.SFName)
-    Sleep 120
-    EnsureWorldShipTop()
-    PasteFieldAt(worldShipFields.Ref2.x, worldShipFields.Ref2.y, data.SFName)
-    Sleep 120
-    PasteFieldAt(worldShipFields.SFPhone.x, worldShipFields.SFPhone.y, data.SFPhone)
-    Sleep 120
+    WaitForAddressFill(fromSnap, 2000, 300, 70)
+    FastSleep(80)
+    PasteFieldAt(worldShipFields.SFName.x, worldShipFields.SFName.y, data.SFName, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.Ref2.x, worldShipFields.Ref2.y, data.SFName, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.SFPhone.x, worldShipFields.SFPhone.y, data.SFPhone, false, true)
+    FastSleep(90)
 
     MouseClick, left, % worldShipTabs.ShipTo.x, worldShipTabs.ShipTo.y
-    Sleep 120
+    FastSleep(90)
 
     companyName := data.Company != "" ? data.Company : data.STName
-    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, companyName)
-    Sleep 120
+    toSnap := CaptureAddressSnapshot()
+    PasteFieldAt(worldShipFields.Company.x, worldShipFields.Company.y, companyName, true, true)
+    FastSleep(90)
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    delay := (companyName = data.Company && companyName != "") ? 2000 : 5000
-    Sleep, %delay%
-    PasteFieldAt(worldShipFields.STName.x, worldShipFields.STName.y, data.STName)
-    Sleep 120
+    waitBudget := (companyName = data.Company && companyName != "") ? 1800 : 3200
+    WaitForAddressFill(toSnap, waitBudget, 400, 70)
+    FastSleep(80)
+    PasteFieldAt(worldShipFields.STName.x, worldShipFields.STName.y, data.STName, false, true)
+    FastSleep(90)
 
-    PasteFieldAt(worldShipFields.Address1.x, worldShipFields.Address1.y, data.Address1)
-    Sleep 120
-    PasteFieldAt(worldShipFields.Address2.x, worldShipFields.Address2.y, data.Address2)
-    Sleep 120
-    PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone)
-    Sleep 120
+    PasteFieldAt(worldShipFields.Address1.x, worldShipFields.Address1.y, data.Address1, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.Address2.x, worldShipFields.Address2.y, data.Address2, false, true)
+    FastSleep(90)
+    PasteFieldAt(worldShipFields.STPhone.x, worldShipFields.STPhone.y, data.STPhone, false, true)
+    FastSleep(90)
 
     PastePostalCode(data.PostalCode)
     PasteDeclaredValue(data.DeclaredValue)
@@ -277,25 +289,51 @@ CopyDeclaredValue(fields)
     return value
 }
 
-PastePostalCode(postalCode)
+PastePostalCode(postalCode, ref2Delay := 3000)
 {
     global worldShipFields, worldShipTabs
+    snap := CaptureAddressSnapshot()
     ClipSaved := ClipboardAll
     Clipboard := postalCode
     MouseClick, left, % worldShipFields.PostalCode.x, worldShipFields.PostalCode.y
-    Sleep 120
+    FastSleep(100)
     SendInput, {Home}
-    Sleep 120
+    FastSleep(100)
     SendInput, +{End}
-    Sleep 120
+    FastSleep(100)
     SendInput, {Delete}
-    Sleep 150
+    FastSleep(120)
     SendInput, %postalCode%
-    Sleep 150
+    FastSleep(120)
     MouseClick, left, % worldShipFields.Ref2.x, worldShipFields.Ref2.y
-    Sleep 1500
+    WaitForAddressFill(snap, ref2Delay, 300, 70)
+    FastSleep(60)
     Clipboard := ClipSaved
     ClipSaved := ""
+}
+
+CaptureAddressSnapshot()
+{
+    global worldShipFields
+    return CopyFieldAt(worldShipFields.City.x, worldShipFields.City.y, true)
+}
+
+WaitForAddressFill(initialSnap, maxWaitMs := 3000, existingCityGrace := 400, pollMs := 70)
+{
+    global worldShipFields
+    waitStartTick := A_TickCount
+    Loop
+    {
+        city := CopyFieldAt(worldShipFields.City.x, worldShipFields.City.y, true)
+        if (city != "" && city != initialSnap)
+            break
+        elapsed := A_TickCount - waitStartTick
+        if (initialSnap != "" && elapsed >= existingCityGrace && city = initialSnap)
+            break
+        if (elapsed >= maxWaitMs)
+            break
+        FastSleep(pollMs)
+    }
 }
 
 PasteDeclaredValue(declaredValue)
@@ -305,7 +343,7 @@ PasteDeclaredValue(declaredValue)
     Sleep 120
     MouseClick, left, % worldShipTabs.Service.x, worldShipTabs.Service.y
     Sleep 120
-    PasteFieldAt(worldShipFields.DeclVal.x, worldShipFields.DeclVal.y, declaredValue)
+    PasteFieldAt(worldShipFields.DeclVal.x, worldShipFields.DeclVal.y, declaredValue, true)
     Sleep 120
 }
 
@@ -398,22 +436,40 @@ NeutralAndHome()
     targetX := Floor(winW * neutralClickR.x)
     targetY := Floor(winH * neutralClickR.y)
     MouseClick, left, %targetX%, %targetY%
-    Sleep 120
+    FastSleep(120)
     SendInput, ^{Home}
-    Sleep 120
+    FastSleep(120)
 }
 
-CopyFieldAt(x, y)
+FastSleep(ms)
+{
+    global fastScale, fastMinSleep
+    target := Round(ms * fastScale)
+    if (target < fastMinSleep)
+        target := fastMinSleep
+    Sleep, %target%
+}
+
+CopyFieldAt(x, y, allowEmpty := false)
 {
     ClipSaved := ClipboardAll
     Clipboard :=
     MouseClick, left, %x%, %y%
-    Sleep 120
+    FastSleep(100)
     SendInput, ^a
-    Sleep 120
+    FastSleep(90)
     SendInput, ^c
-    ClipWait, 0.5
+    ClipWait, 0.3
     text := Clipboard
+    if (text = "" && !allowEmpty)
+    {
+        FastSleep(60)
+        SendInput, ^a
+        FastSleep(60)
+        SendInput, ^c
+        ClipWait, 0.2
+        text := Clipboard
+    }
     Clipboard := ClipSaved
     ClipSaved := ""
     return text
@@ -424,7 +480,7 @@ CopyCaretValue()
     ClipSaved := ClipboardAll
     Clipboard :=
     SendInput, ^a
-    Sleep 120
+    FastSleep(120)
     SendInput, ^c
     ClipWait, 0.5
     text := Clipboard
@@ -432,23 +488,24 @@ CopyCaretValue()
     ClipSaved := ""
     return text
 }
-PasteFieldAt(x, y, text)
+PasteFieldAt(x, y, text, allowEmpty := false, skipFocus := false)
 {
-    if (text = "")
+    if (text = "" && !allowEmpty)
         return
-    FocusWorldShipWindow()
+    if (!skipFocus)
+        FocusWorldShipWindow()
     ClipSaved := ClipboardAll
     Clipboard := text
     MouseClick, left, %x%, %y%
-    Sleep 120
+    FastSleep(120)
     SendInput, {Home}
-    Sleep 120
+    FastSleep(100)
     SendInput, +{End}
-    Sleep 120
+    FastSleep(100)
     SendInput, {Delete}
-    Sleep 120
+    FastSleep(100)
     SendInput, ^v
-    Sleep 110
+    FastSleep(100)
     Clipboard := ClipSaved
     ClipSaved := ""
 }
