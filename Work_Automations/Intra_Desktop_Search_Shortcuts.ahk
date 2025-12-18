@@ -26,8 +26,6 @@ IsIntraSearchWin()
 {
     return WinActive("Search - General")
         || WinActive("Search Results:")
-        || WinExist("Search - General")
-        || WinExist("Search Results:")
 }
 
 ; Scope any search hotkeys to the intended Intra windows.
