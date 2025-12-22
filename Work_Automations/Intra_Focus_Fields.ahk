@@ -16,6 +16,7 @@ SetTitleMatchMode, 2
     MouseClick, Left, 200, 245, 2 
 Return
 
+#If WinActive("Intra Desktop Client - Assign Recip")
 !a:: ; focus alias field
     Sleep 250
     MouseClick, left, 930, 830, 2
@@ -28,7 +29,6 @@ Return
     MouseClick, left, 130, 850, 2
 Return
 
-#If WinActive("Intra Desktop Client - Assign Recip")
 !1:: ; focus package type field
     Sleep 250
     MouseClick, left, 1100, 365, 2
@@ -37,6 +37,20 @@ Return
 !2:: ; focus BSC location field
     Sleep 250
     MouseClick, left, 1100, 650, 2
+Return
+
+!c:: ; clear all + submit (Assign Recip)
+    MouseClick, left, 68, 1345, 2
+    Sleep 200
+    Send, {Enter}
+    Sleep 200
+    Loop, 2
+    {
+        SendInput, {Esc}
+        Sleep 50
+    }
+    Sleep 200
+    MouseClick, left, 200, 245, 2  ; return focus to scan field
 Return
 
 !d:: ; click item var lookup + apply-all buttons
