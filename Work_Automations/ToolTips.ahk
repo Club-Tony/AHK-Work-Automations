@@ -56,6 +56,7 @@ Ctrl+Alt+F - Launch Intra Search Shortcuts
 Ctrl+Alt+I - Launch Intra Extensive Automations
 Ctrl+Alt+C - Launch DSRF to WorldShip Script
 Ctrl+Alt+L - Launch Daily Audit + Smartsheet
+Ctrl+Alt+W - Intra Desktop Client Organizing
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %TooltipText%
@@ -84,9 +85,18 @@ Return
 ~^!c::Gosub HideTooltips
 ~^!f::Gosub HideTooltips
 ~^!d::Gosub HideTooltips
+~^!w::Gosub HideTooltips
 ~^!t::Gosub HideTooltips
 ~^!i::Gosub HideTooltips
 ~^i::Gosub HideTooltips
+~#a::Gosub HideTooltips
+~#u::Gosub HideTooltips
+~#p::Gosub HideTooltips
+~#f::Gosub HideTooltips
+~#s::Gosub HideTooltips
+~#w::Gosub HideTooltips
+~#i::Gosub HideTooltips
+~#!m::Gosub HideTooltips
 #If
 
 ; Intra Search - show SSJ search hotkeys when Search - General is active
@@ -132,6 +142,7 @@ Ctrl+Enter - Scroll to bottom and Submit
 Ctrl+Alt+S - Fill Special Instructions
 Ctrl+Alt+A - ACP preset -> Alias
 Alt+P  - Load "posters" preset -> Name field
+Ctrl+Alt+P - Poster full automation
 Alt+1  - Focus "# of Packages"
 Alt+2  - Focus Package Type
 Alt+L  - Click Load button
@@ -184,6 +195,37 @@ return
 ~^!c::Gosub HideTooltips
 ~^!p::Gosub HideTooltips
 ~^!b::Gosub HideTooltips
+#If
+
+; Intra Window Switch hotkeys (Slack or UPS WorldShip active)
+#If ( WinActive("ahk_exe slack.exe") || WinActive("UPS WorldShip") )
+^!t::
+    if (TooltipActive) {
+        Gosub, HideTooltips
+        Return
+    }
+    ; Park cursor at active window center to keep tooltip contextually visible.
+    CoordMode, Mouse, Screen
+    WinGetPos, winX, winY, winW, winH, A
+    if (winW && winH)
+        MouseMove, % (winX + winW//2), % (winY + winH//2)
+    TooltipActive := true
+    tooltipText =
+    (
+Intra Window Switch Hotkeys
+Win+A / Win+U / Win+P - Focus/Minimize Assign / Update / Pickup
+Win+F - Focus/Minimize Firefox
+Win+S - Focus/Minimize Slack
+Win+W - Focus/Minimize UPS WorldShip
+Win+I - Focus/Minimize all Intra windows
+Win+Alt+M - Minimize all, then focus Firefox, Outlook PWA, Slack
+Ctrl+Alt+W - Intra Desktop Client Organizing
+Ctrl+Alt+T - Show this tooltip again
+    )
+    Tooltip, %tooltipText%
+    Hotkey, Esc, HideTooltips, On
+    SetTimer, HideTooltips, -15000
+return
 #If
 
 HideTooltips:
