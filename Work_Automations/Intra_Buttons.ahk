@@ -7,6 +7,11 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode, 2  ; Allow partial matches on Firefox window titles.
 CoordMode, Mouse, Window  ; Work with positions relative to the active Intra window.
 SetDefaultMouseSpeed, 0
+posterMsgId := 0x5555
+OnMessage(posterMsgId, "HandlePosterMessage")
+interofficeTitle := "Intra: Interoffice Request"
+interofficeExes := ["firefox.exe", "chrome.exe", "msedge.exe"]
+ctrlWRunning := false
 
 ; Scope: Intra Interoffice Request (Firefox) helpers for common form fields.
 ^Esc::Reload
@@ -37,26 +42,97 @@ BuildingFieldY := 811
 PackagesCountX := 480
 PackagesCountY := 1154
 
-#IfWinActive, Intra: Interoffice Request ahk_exe firefox.exe
+#If IsInterofficeActive()
 ^Enter::
-    EnsureIntraWindow()
-    Sleep 150
-    MouseClick, left, 1005, 860, 2
-    Sleep 150
-    aliasText := CopyFieldText("Top", AliasFieldX, AliasFieldY)
-    Sleep 150
-    if (aliasText != "")
-        Clipboard := aliasText  ; leave alias ready to paste after submit
-    MouseClick, left, 1400, 850, 2
-    Sleep 150
-    SendInput, ^{End}
-    Sleep 250
-    MouseClick, left, 460, 1313, 2 ; this Mouseclick, the Sleep 250 before, and the following double mouseclick ensures successful button press
-    Sleep 150
-    MouseClick, left, 457, 1313, 2
+    DoCtrlEnter()
 return
 
 !c::
+    DoAltC()
+return
+
+!s::
+!e::
+    DoAltE()
+return
+
+!a::
+    DoAltA()
+return
+
+!n::
+    DoAltN()
+return
+
+!p::
+    DoAltP()
+return
+
+^!a::
+    DoCtrlAltA()
+return
+
+HandleEnvelopeClick:
+    MouseClick, left, 730, 360
+    Sleep 150
+return
+
+^!s::
+    DoCtrlAltS()
+return
+
+^!t::
+return
+
+!1::
+    DoAlt1()
+return
+
+!2::
+    DoAlt2()
+return
+
+!l::
+    DoAltL()
+return
+
+!Space::
+    DoAltSpace()
+return
+
+^w::
+    DoCtrlW()
+return
+
+EnsureIntraWindow()
+{
+    title := GetInterofficeWinTitle()
+    if (title = "")
+        return
+    WinMove, %title%,, 1917, 0, 1530, 1399
+    Sleep 150
+}
+
+DoAltE()
+{
+    EnsureIntraWindow()
+    Sleep 150
+    MouseClick, left, 1400, 850, 2  ; neutral click to defocus controls
+    Sleep 150
+    SendInput, ^{Home}  ; scroll to top
+    Sleep 150
+    MouseClick, left, 730, 360
+}
+
+DoAltL()
+{
+    Send {Tab 4}
+    Sleep 50
+    Send {Space}
+}
+
+DoAltC()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -68,20 +144,10 @@ return
     MouseClick, left, 1400, 850, 2
     Sleep 150
     SendInput, ^{Home}
-return
+}
 
-!s::
-!e::
-    EnsureIntraWindow()
-    Sleep 150
-    MouseClick, left, 1400, 850, 2  ; neutral click to defocus controls
-    Sleep 150
-    SendInput, ^{Home}  ; scroll to top
-    Sleep 150
-    MouseClick, left, 730, 360
-return
-
-!a::
+DoAltA()
+{
     EnsureIntraWindow()
     Sleep 50
     MouseClick, left, 1400, 850, 2
@@ -95,9 +161,10 @@ return
     if (aliasText != "")
         Clipboard := aliasText  ; leave alias ready to paste after submit
     MouseClick, left, 1005, 860
-return
+}
 
-!n::
+DoAltN()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -105,9 +172,10 @@ return
     SendInput, ^{Home}
     Sleep 150
     MouseClick, left, 450, 560, 2
-return
+}
 
-!p::
+DoAltP()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -123,9 +191,10 @@ return
     MouseClick, left, 880, 815
     Sleep 150
     MouseClick, left, 485, 860
-return
+}
 
-^!a::
+DoCtrlAltA()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -141,14 +210,57 @@ return
     MouseClick, left, 880, 815
     Sleep 500
     MouseClick, left, 1005, 860
-return
+}
 
-HandleEnvelopeClick:
-    MouseClick, left, 730, 360
+DoAlt1()
+{
+    EnsureIntraWindow()
     Sleep 150
-return
+    MouseClick, left, 1400, 850, 2
+    Sleep 150
+    Loop 5 {
+        SendInput, {WheelUp}
+        Sleep 25
+    }
+    Sleep 150
+    MouseClick, left, 480, 1154
+}
 
-^!s::
+DoAlt2()
+{
+    EnsureIntraWindow()
+    Sleep 150
+    MouseClick, left, 1400, 850, 2
+    Sleep 150
+    Loop 5 {
+        SendInput, {WheelUp}
+        Sleep 25
+    }
+    Sleep 150
+    MouseClick, left, 480, 1246
+}
+
+DoCtrlEnter()
+{
+    EnsureIntraWindow()
+    Sleep 150
+    MouseClick, left, 1005, 860, 2
+    Sleep 150
+    aliasText := CopyFieldText("Top", AliasFieldX, AliasFieldY)
+    Sleep 150
+    if (aliasText != "")
+        Clipboard := aliasText  ; leave alias ready to paste after submit
+    MouseClick, left, 1400, 850, 2
+    Sleep 150
+    SendInput, ^{End}
+    Sleep 250
+    MouseClick, left, 460, 1313, 2 ; this Mouseclick, the Sleep 250 before, and the following double mouseclick ensures successful button press
+    Sleep 150
+    MouseClick, left, 457, 1313, 2
+}
+
+DoCtrlAltS()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -164,44 +276,10 @@ return
     SendInput, Order:{Space}
     Tooltip, Alt+Space to enter building code + recipient alias.
     SetTimer, HideSpecialTooltip, -4000
-return
+}
 
-^!t::
-return
-
-!1::
-    EnsureIntraWindow()
-    Sleep 150
-    MouseClick, left, 1400, 850, 2
-    Sleep 150
-    Loop 5 {
-        SendInput, {WheelUp}
-        Sleep 25
-    }
-    Sleep 150
-    MouseClick, left, 480, 1154
-return
-
-!2::
-    EnsureIntraWindow()
-    Sleep 150
-    MouseClick, left, 1400, 850, 2
-    Sleep 150
-    Loop 5 {
-        SendInput, {WheelUp}
-        Sleep 25
-    }
-    Sleep 150
-    MouseClick, left, 480, 1246
-return
-
-!l::
-    Send {Tab 4}
-    Sleep 50
-    Send {Space}
-return
-
-!Space::
+DoAltSpace()
+{
     EnsureIntraWindow()
     Sleep 150
     MouseClick, left, 1400, 850, 2
@@ -237,12 +315,23 @@ return
     SendInput, ^v
     Sleep 100
     SendInput, @
-return
+}
 
-EnsureIntraWindow()
+HandlePosterMessage(wParam, lParam, msg, hwnd)
 {
-    WinMove, Intra: Interoffice Request ahk_exe firefox.exe,, 1917, 0, 1530, 1399
-    Sleep 150
+    global posterMsgId
+    if (msg != posterMsgId)
+        return
+    if (wParam = 1)
+        DoAltE()
+    else if (wParam = 2)
+        DoAltL()
+    else if (wParam = 3)
+        DoAltP()
+    else if (wParam = 4)
+        DoAlt2()
+    else if (wParam = 5)
+        DoAltN()
 }
 
 CopyFieldText(scrollPos, xCoord, yCoord)
@@ -285,6 +374,98 @@ GetFieldText(scrollPos, xRatio, yRatio, promptText := "")
 HideSpecialTooltip()
 {
     Tooltip
+}
+
+GetInterofficeWinTitle()
+{
+    global interofficeTitle, interofficeExes
+    for _, exe in interofficeExes
+    {
+        candidate := interofficeTitle " ahk_exe " exe
+        if (WinExist(candidate))
+            return candidate
+    }
+    return ""
+}
+
+IsInterofficeActive()
+{
+    title := GetInterofficeWinTitle()
+    return (title != "" && WinActive(title))
+}
+
+DoCtrlW()
+{
+    global ctrlWRunning
+    if (ctrlWRunning)
+        return
+    ctrlWRunning := true
+
+    title := GetInterofficeWinTitle()
+    if (title = "")
+    {
+        ctrlWRunning := false
+        return
+    }
+
+    prompt := "Close 15x open tabs?`nEnter = Yes`nW = No, only current"
+    Tooltip, %prompt%
+
+    action := WaitForCloseTabsChoice()
+    Tooltip
+    ctrlWRunning := false
+
+    if (action = "single")
+    {
+        SendInput, ^w
+        return
+    }
+    else if (action != "bulk")
+    {
+        return
+    }
+
+    ; Bulk close up to 15 tabs, aborting on Esc or window loss.
+    Loop, 15
+    {
+        if (GetKeyState("Esc", "P") || GetKeyState("Escape", "P"))
+            break
+        if (!WinExist(title))
+            break
+        SendInput, ^w
+        Sleep 120
+    }
+}
+
+WaitForCloseTabsChoice()
+{
+    action := ""
+    Loop
+    {
+        Input, key, L1 M V, {Enter}{Esc}{LControl}{RControl}{w}{W}
+        err := ErrorLevel
+        if (SubStr(err, 1, 6) = "EndKey")
+        {
+            keyName := SubStr(err, 8)
+            if (keyName = "Enter")
+                action := "bulk"
+            else if (keyName = "w" || keyName = "W")
+                action := "single"
+            else if (keyName = "LControl" || keyName = "RControl")
+            {
+                action := "cancel"
+            }
+            else
+                action := "cancel"
+            break
+        }
+        else
+        {
+            action := "cancel"
+            break
+        }
+    }
+    return action
 }
 
 #IfWinActive

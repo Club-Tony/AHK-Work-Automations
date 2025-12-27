@@ -23,6 +23,8 @@ browserExes := ["firefox.exe", "chrome.exe", "msedge.exe"]
 #s::ToggleFocusOrMinimizeExe("slack.exe")
 #w::ToggleFocusOrMinimize(worldShipTitle)
 #o::ToggleOutlookPwa()
+#e::ToggleExplorer()
+#!e::OpenNewExplorer()
 
 #i::ToggleIntraGroup()
 #!v::ToggleFocusOrMinimizeExe("Code.exe")
@@ -255,4 +257,52 @@ ToggleOutlookPwa()
             return
         }
     }
+}
+
+ToggleExplorer()
+{
+    ; Cycle Explorer windows if multiple; toggle minimize if single and active; open if none.
+    WinGet, idList, List, ahk_class CabinetWClass
+    count := idList
+    if (count = 0)
+    {
+        Run, explorer.exe
+        return
+    }
+
+    WinGet, activeId, ID, A
+    activeIsExplorer := WinActive("ahk_class CabinetWClass")
+
+    if (count = 1 && activeIsExplorer)
+    {
+        WinMinimize, ahk_id %activeId%
+        return
+    }
+
+    if (!activeIsExplorer)
+    {
+        WinActivate, ahk_id %idList1%
+        WinWaitActive, ahk_id %idList1%,, 1
+        return
+    }
+
+    nextIndex := 1
+    Loop %count%
+    {
+        idx := A_Index
+        thisId := idList%idx%
+        if (thisId = activeId)
+        {
+            nextIndex := (idx = count) ? 1 : (idx + 1)
+            break
+        }
+    }
+    nextId := idList%nextIndex%
+    WinActivate, ahk_id %nextId%
+    WinWaitActive, ahk_id %nextId%,, 1
+}
+
+OpenNewExplorer()
+{
+    Run, explorer.exe
 }

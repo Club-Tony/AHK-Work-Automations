@@ -10,6 +10,7 @@ TooltipActive := false
 TooltipLocked := false
 TooltipCooldownMs := 30000 ; 30 seconds
 ButtonsTooltipActive := false
+interofficeExes := ["firefox.exe", "chrome.exe", "msedge.exe"]
 
 ^Esc::Reload
 
@@ -56,7 +57,7 @@ Ctrl+Alt+F - Launch Intra Search Shortcuts
 Ctrl+Alt+I - Launch Intra Extensive Automations
 Ctrl+Alt+C - Launch DSRF to WorldShip Script
 Ctrl+Alt+L - Launch Daily Audit + Smartsheet
-Ctrl+Alt+W - Intra Desktop Client Organizing
+Ctrl+Alt+W - Intra Desktop Window Organizing
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %TooltipText%
@@ -140,16 +141,16 @@ UnlockTooltip:
     TooltipLocked := false
 Return
 
-; Intra Buttons (Firefox Interoffice/Shipping) tooltip
-#IfWinActive, Intra: Interoffice Request ahk_exe firefox.exe
+; Intra Buttons (Interoffice tab any browser) tooltip
+#If InterofficeActive()
 
 ^!t::
     ButtonsTooltipActive := true
     TooltipActive := true
     tooltipText =
     (
-SSJ Intra - Interoffice Requests
-Alt+S  - Focus envelope icon
+SSJ Intra: Interoffice Requests
+Alt+E/Alt+S  - Focus envelope icon
 Alt+A  - Focus alias field
 Alt+N  - Focus SF name field
 Ctrl+Enter - Scroll to bottom and Submit
@@ -161,6 +162,7 @@ Alt+1  - Focus "# of Packages"
 Alt+2  - Focus Package Type
 Alt+L  - Click Load button
 Alt+C  - Clear/Reset
+Ctrl+W - Close open tabs (bulk prompt)
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %tooltipText%
@@ -181,6 +183,8 @@ Return
 ~!l::Gosub HideTooltips
 ~!c::Gosub HideTooltips
 ~!Space::Gosub HideTooltips
+~^w::Gosub HideTooltips
+~^!t::Gosub HideTooltips
 ~^Enter::Gosub HideTooltips
 #If
 
@@ -211,9 +215,47 @@ return
 ~^!b::Gosub HideTooltips
 #If
 
-; Intra Window Switch hotkeys (Slack or UPS WorldShip active)
-#If ( WinActive("ahk_exe slack.exe") || WinActive("UPS WorldShip") )
+; UPS WorldShip shortcuts (UPS_WS_Shortcuts.ahk) when only WorldShip is active
+#If ( WinActive("UPS WorldShip") )
 ^!t::
+    if (TooltipActive) {
+        Gosub, HideTooltips
+        Return
+    }
+    TooltipActive := true
+    tooltipText =
+    (
+UPS WorldShip Hotkeys
+Alt+A   - Paste @amazon.com
+Alt+Tab - Jump forward 6 tabs
+Alt+1   - Tab forward 2
+Alt+2   - Tab forward 8
+Ctrl+Alt+T - Show this tooltip again
+    )
+    Tooltip, %tooltipText%
+    Hotkey, Esc, HideTooltips, On
+    SetTimer, HideTooltips, -15000
+return
+#If
+
+#If (TooltipActive && WinActive("UPS WorldShip"))
+~!a::Gosub HideTooltips
+~!Tab::Gosub HideTooltips
+~!1::Gosub HideTooltips
+~!2::Gosub HideTooltips
+#If
+
+; Intra Window Switch hotkeys (global trigger, guarded against other tooltip scopes)
+^!t::
+    ; Skip if another tooltip scope should own ^!t
+    if (WinActive("Intra: Interoffice Request")
+        || WinActive("Intra: Shipping Request Form")
+        || WinActive("Intra Desktop Client - Assign Recip")
+        || WinActive("Intra Desktop Client - Update")
+        || WinActive("Intra Desktop Client - Pickup")
+        || WinActive("UPS WorldShip")
+        || WinActive("ahk_exe slack.exe"))
+        return
     if (TooltipActive) {
         Gosub, HideTooltips
         Return
@@ -231,16 +273,17 @@ Win+A / Win+U / Win+P - Focus/Minimize Assign / Update / Pickup
 Win+F - Focus/Minimize Firefox
 Win+S - Focus/Minimize Slack
 Win+W - Focus/Minimize UPS WorldShip
+Win+E - Focus/Minimize/Cycle Explorer
+Win+Alt+E - Open new Explorer window
 Win+I - Focus/Minimize all Intra windows
 Win+Alt+M - Minimize all, then focus Firefox, Outlook PWA, Slack
-Ctrl+Alt+W - Intra Desktop Client Organizing
+Ctrl+Alt+W - Intra Desktop Window Organizing
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %tooltipText%
     Hotkey, Esc, HideTooltips, On
     SetTimer, HideTooltips, -15000
 return
-#If
 
 HideTooltips:
     SetTimer, UnlockTooltip, Off
@@ -278,3 +321,15 @@ return
 ~!e::Gosub HideTooltips
 ~!c::Gosub HideTooltips
 #If
+
+InterofficeActive()
+{
+    title := "Intra: Interoffice Request"
+    if (WinActive(title " ahk_exe firefox.exe"))
+        return true
+    if (WinActive(title " ahk_exe chrome.exe"))
+        return true
+    if (WinActive(title " ahk_exe msedge.exe"))
+        return true
+    return WinActive(title)
+}
