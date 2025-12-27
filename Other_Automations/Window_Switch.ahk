@@ -12,7 +12,8 @@ CoordMode, Mouse, Window
 #e::ToggleExplorer()
 #!e::Run, explorer.exe
 #f::ToggleFirefox()
-return
+; Win+Alt+V - Focus/Minimize VS Code
+#!v::ToggleFocusOrMinimizeExe("Code.exe")
 
 ToggleExplorer()
 {
@@ -73,4 +74,19 @@ ToggleFirefox()
         return
     }
     Run, firefox.exe
+}
+
+ToggleFocusOrMinimizeExe(exe)
+{
+    candidate := "ahk_exe " exe
+    if WinActive(candidate)
+    {
+        WinMinimize, %candidate%
+        return
+    }
+    if WinExist(candidate)
+    {
+        WinActivate  ; last found window
+        WinWaitActive, %candidate%,, 1
+    }
 }

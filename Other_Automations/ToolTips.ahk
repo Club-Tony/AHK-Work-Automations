@@ -22,6 +22,7 @@ TooltipActive := false
 Window Switch (Personal)
 Win+E       - Focus/Minimize/Cycle Explorer
 Win+Alt+E   - Open new Explorer window
+Win+Alt+V   - Focus/Minimize VS Code
 Win+F       - Focus/Minimize/Launch Firefox
 Ctrl+Alt+T  - Show this tooltip again
     )
@@ -39,6 +40,7 @@ return
 #If (TooltipActive)
 ~#e::Gosub HideTooltips
 ~#!e::Gosub HideTooltips
+~#!v::Gosub HideTooltips
 ~#f::Gosub HideTooltips
 ~^!t::Gosub HideTooltips
 #If

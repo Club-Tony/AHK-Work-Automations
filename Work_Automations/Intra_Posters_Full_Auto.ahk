@@ -101,11 +101,13 @@ posterActionAltN := 5
     Loop % names.Length()
     {
         CallIntraButtonsHotkey(posterActionAltN)
-        Sleep 800
+        Sleep 1500
         SendInput, % " " names[A_Index] "-r"
-        Sleep 1200
+        Sleep 2500
         Send, {Enter}
-        Sleep 300
+        Sleep 250
+        Send ^{Tab}
+        Sleep 250
     }
 
      ; End of poster automation steps (So Far).
