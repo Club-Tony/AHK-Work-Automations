@@ -192,17 +192,49 @@ ToggleFocusOrMinimizeExe(exe)
 
 ToggleFirefox()
 {
-    if WinActive("ahk_exe firefox.exe")
+    ; Cycle Firefox windows if multiple; toggle minimize if single and active; open if none.
+    WinGet, idList, List, ahk_exe firefox.exe
+    count := idList
+    if (count = 0)
     {
-        WinMinimize, ahk_exe firefox.exe
+        Run, firefox.exe
         return
     }
-    if WinExist("ahk_exe firefox.exe")
+
+    WinGet, activeId, ID, A
+    activeIsFirefox := WinActive("ahk_exe firefox.exe")
+
+    if (count = 1 && activeIsFirefox)
     {
-        WinActivate  ; last found window
-        WinWaitActive, ahk_exe firefox.exe,, 1
-        EnsureFirefoxWindow()
+        WinMinimize, ahk_id %activeId%
+        return
     }
+
+    if (!activeIsFirefox)
+    {
+        WinRestore, ahk_id %idList1%
+        WinActivate, ahk_id %idList1%
+        WinWaitActive, ahk_id %idList1%,, 1
+        EnsureFirefoxWindow()
+        return
+    }
+
+    nextIndex := 1
+    Loop %count%
+    {
+        idx := A_Index
+        thisId := idList%idx%
+        if (thisId = activeId)
+        {
+            nextIndex := (idx = count) ? 1 : (idx + 1)
+            break
+        }
+    }
+    nextId := idList%nextIndex%
+    WinRestore, ahk_id %nextId%
+    WinActivate, ahk_id %nextId%
+    WinWaitActive, ahk_id %nextId%,, 1
+    EnsureFirefoxWindow()
 }
 
 EnsureFirefoxWindow()

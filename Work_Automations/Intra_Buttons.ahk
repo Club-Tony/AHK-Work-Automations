@@ -11,7 +11,9 @@ posterMsgId := 0x5555
 OnMessage(posterMsgId, "HandlePosterMessage")
 interofficeTitle := "Intra: Interoffice Request"
 interofficeExes := ["firefox.exe", "chrome.exe", "msedge.exe"]
+exportedReportTitle := "ExportedReport.pdf"
 ctrlWRunning := false
+exportedReportTitle := "ExportedReport.pdf"
 
 ; Scope: Intra Interoffice Request (Firefox) helpers for common form fields.
 ^Esc::Reload
@@ -62,6 +64,14 @@ return
 
 !n::
     DoAltN()
+return
+
+^!n::
+    DoCtrlAltN()
+return
+
+^!Enter::
+    DoCtrlAltEnter()
 return
 
 !p::
@@ -174,7 +184,7 @@ DoAltN()
     MouseClick, left, 450, 560, 2
 }
 
-DoAltP()
+DoCtrlAltN()
 {
     EnsureIntraWindow()
     Sleep 150
@@ -182,9 +192,20 @@ DoAltP()
     Sleep 150
     SendInput, ^{Home}
     Sleep 150
+    MouseClick, left, 467, 858, 2
+}
+
+DoAltP()
+{
+    EnsureIntraWindow()
+    Sleep 50
+    MouseClick, left, 1400, 850, 2
+    Sleep 50
+    SendInput, ^{Home}
+    Sleep 150
     Gosub, HandleEnvelopeClick
-    Sleep, 500
-    SendInput, poster
+    Sleep, 350
+    SendInput, post
     Sleep 150
     SendInput, {Enter}
     Sleep 200
@@ -229,15 +250,14 @@ DoAlt1()
 DoAlt2()
 {
     EnsureIntraWindow()
-    Sleep 150
+    Sleep 50
     MouseClick, left, 1400, 850, 2
-    Sleep 150
+    Sleep 100
     Loop 5 {
         SendInput, {WheelUp}
-        Sleep 25
     }
-    Sleep 150
-    MouseClick, left, 480, 1246
+    Sleep 100
+    MouseClick, left, 480, 1246, 2
 }
 
 DoCtrlEnter()
@@ -317,6 +337,19 @@ DoAltSpace()
     SendInput, @
 }
 
+DoCtrlAltEnter()
+{
+    EnsureIntraWindow()
+    Sleep 150
+    MouseClick, left, 1400, 850, 2
+    Sleep 150
+    SendInput, ^{End}
+    Sleep 250
+    MouseClick, left, 460, 1313, 2 ; this Mouseclick, the Sleep 250 before, and the following double mouseclick ensures successful button press
+    Sleep 150
+    MouseClick, left, 457, 1313, 2
+}
+
 HandlePosterMessage(wParam, lParam, msg, hwnd)
 {
     global posterMsgId
@@ -332,6 +365,12 @@ HandlePosterMessage(wParam, lParam, msg, hwnd)
         DoAlt2()
     else if (wParam = 5)
         DoAltN()
+    else if (wParam = 6)
+        DoCtrlAltN()
+    else if (wParam = 7)
+        DoCtrlAltEnter()
+    else if (wParam = 8)
+        DoCtrlW()
 }
 
 CopyFieldText(scrollPos, xCoord, yCoord)
@@ -394,6 +433,26 @@ IsInterofficeActive()
     return (title != "" && WinActive(title))
 }
 
+GetExportedReportWinTitle()
+{
+    global exportedReportTitle, interofficeExes
+    for _, exe in interofficeExes
+    {
+        candidate := exportedReportTitle " ahk_exe " exe
+        if (WinExist(candidate))
+            return candidate
+    }
+    return ""
+}
+
+IsCloseableWindow()
+{
+    interTitle := GetInterofficeWinTitle()
+    expTitle := GetExportedReportWinTitle()
+    return ( (interTitle != "" && WinActive(interTitle))
+          || (expTitle != "" && WinActive(expTitle)) )
+}
+
 DoCtrlW()
 {
     global ctrlWRunning
@@ -401,14 +460,13 @@ DoCtrlW()
         return
     ctrlWRunning := true
 
-    title := GetInterofficeWinTitle()
-    if (title = "")
+    if (!IsCloseableWindow())
     {
         ctrlWRunning := false
         return
     }
 
-    prompt := "Close 15x open tabs?`nEnter = Yes`nW = No, only current"
+    prompt := "Close tabs?`nEnter = 15x`nC = 32x`nW = only current"
     Tooltip, %prompt%
 
     action := WaitForCloseTabsChoice()
@@ -417,20 +475,22 @@ DoCtrlW()
 
     if (action = "single")
     {
-        SendInput, ^w
+        if (IsCloseableWindow())
+            SendInput, ^w
         return
     }
-    else if (action != "bulk")
+    else if (action != "bulk" && action != "bulk32")
     {
         return
     }
 
-    ; Bulk close up to 15 tabs, aborting on Esc or window loss.
-    Loop, 15
+    maxCount := (action = "bulk32") ? 32 : 15
+    ; Bulk close up to maxCount tabs, aborting on Esc or window loss.
+    Loop, %maxCount%
     {
         if (GetKeyState("Esc", "P") || GetKeyState("Escape", "P"))
             break
-        if (!WinExist(title))
+        if (!IsCloseableWindow())
             break
         SendInput, ^w
         Sleep 120
@@ -442,13 +502,15 @@ WaitForCloseTabsChoice()
     action := ""
     Loop
     {
-        Input, key, L1 M V, {Enter}{Esc}{LControl}{RControl}{w}{W}
+        Input, key, L1 M V, {Enter}{Esc}{LControl}{RControl}{w}{W}{c}{C}
         err := ErrorLevel
         if (SubStr(err, 1, 6) = "EndKey")
         {
             keyName := SubStr(err, 8)
             if (keyName = "Enter")
                 action := "bulk"
+            else if (keyName = "c" || keyName = "C")
+                action := "bulk32"
             else if (keyName = "w" || keyName = "W")
                 action := "single"
             else if (keyName = "LControl" || keyName = "RControl")

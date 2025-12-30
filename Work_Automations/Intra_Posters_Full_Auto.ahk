@@ -12,6 +12,7 @@ SetKeyDelay, 50
 
 posterWinTitle := "Intra: Interoffice Request"
 posterWinExes := ["firefox.exe", "chrome.exe", "msedge.exe"]  ; priority order
+exportedReportTitle := "ExportedReport.pdf"
 intraButtonsPath := A_ScriptDir "\Intra_Buttons.ahk"
 posterHotkeyRunning := false
 posterHotkeyCancelled := false
@@ -21,6 +22,9 @@ posterActionAltL := 2
 posterActionAltP := 3
 posterActionAlt2 := 4
 posterActionAltN := 5
+posterActionCtrlAltN := 6
+posterActionCtrlAltEnter := 7
+posterActionCtrlW := 8
 
 ; Scope: Intra: Interoffice Request (browser) poster automation (priority: Firefox > Chrome > Edge).
 ^Esc::Reload
@@ -28,6 +32,7 @@ posterActionAltN := 5
 ^!p::  ; TODO: full poster automation
     posterHotkeyCancelled := false
     posterHotkeyRunning := true
+    startTick := A_TickCount
     if (!FocusPosterWindow())
     {
         ShowTimedTooltip("Open Intra: Interoffice Request in Firefox/Chrome/Edge", 3000)
@@ -45,20 +50,29 @@ posterActionAltN := 5
         send, ^t
         sleep, 150
         send, ^v
-        sleep, 50
+        sleep, 100
         send, {Enter}
         sleep, 150
     }
-    Sleep 250
+    Sleep 500
 
     ; Return to the original tab.
     Loop, 15
     {
         send, ^+{Tab}
         sleep, 50
+        if (!WinActive(GetPosterWindowTitle()))
+        {
+            send, ^l
+            sleep, 100
+            send, ^v
+            sleep, 100
+            send, {Enter}
+            sleep, 200
+        }
     }
 
-    Sleep 500
+    Sleep 1000
     
     curTitle := GetPosterWindowTitle()
     if (curTitle = "" || !WinActive(curTitle))
@@ -76,44 +90,47 @@ posterActionAltN := 5
     Loop, 3
     {
         CallIntraButtonsHotkey(posterActionAltP)
-        Sleep 2500
+        Sleep 2000
         CallIntraButtonsHotkey(posterActionAlt2)
-        Sleep 1500
-        Send mid
-        Sleep 250
-        Send, {Enter}
-        Sleep 1000
-        Send ^{Tab}
         Sleep 500
+        Send mid
+        Sleep 150
+        Send, {Enter}
+        Sleep 100
+        Send ^{Tab}
+        Sleep 100
     }
 
     ; Envelopes
     Loop, 13
     {
         CallIntraButtonsHotkey(posterActionAltP)
-        Sleep 2500
+        Sleep 2000
         Send ^{Tab}
-        Sleep 500
+        Sleep 100
     }
 
     ; Name Fields
     names := [107,83,33,129,129,129,99,99,132,125,114,111,109,74,93,69]
     Loop % names.Length()
     {
-        CallIntraButtonsHotkey(posterActionAltN)
-        Sleep 1500
-        SendInput, % " " names[A_Index] "-r"
-        Sleep 2500
-        Send, {Enter}
-        Sleep 250
+        CallIntraButtonsHotkey(posterActionCtrlAltN)
+        Sleep 1000
+        SendInput, % names[A_Index] "-r"
+        Sleep 3000
+        Send {Enter}
+        Sleep 50
+        CallIntraButtonsHotkey(posterActionCtrlAltEnter)
+        WaitForExportedReportAndPrint(10000)
+        Sleep 300
         Send ^{Tab}
-        Sleep 250
+        Sleep 150
     }
-
-     ; End of poster automation steps (So Far).
-    Tooltip, "Automation implemented thus far"
-    Sleep 4000
-    Tooltip
+     ; Close relevant tabs/end the script
+    CallIntraButtonsHotkey(posterActionCtrlW)
+    Sleep 300
+    SendInput, c
+    ShowHotkeyRuntime(startTick)
 return
 
 PosterWindowExists()
@@ -143,6 +160,41 @@ GetPosterWindowTitle()
     return ""
 }
 
+GetExportedReportWindow()
+{
+    global exportedReportTitle, posterWinExes
+    for _, exe in posterWinExes
+    {
+        candidate := exportedReportTitle " ahk_exe " exe
+        if (WinExist(candidate))
+            return candidate
+    }
+    return ""
+}
+
+WaitForExportedReportAndPrint(timeoutMs := 10000)
+{
+    deadline := A_TickCount + timeoutMs
+    target := ""
+    while (A_TickCount < deadline)
+    {
+        target := GetExportedReportWindow()
+        if (target != "")
+            break
+        Sleep 200
+    }
+    if (target = "")
+        return false
+
+    WinActivate, %target%
+    WinWaitActive, %target%,, 2
+    SendInput, ^p
+    Sleep 400
+    SendInput, {Enter}
+    Sleep 400
+    return true
+}
+
 ShowTimedTooltip(msg, duration := 3000)
 {
     ToolTip, %msg%
@@ -150,6 +202,18 @@ ShowTimedTooltip(msg, duration := 3000)
 }
 
 HideTimedTooltip:
+    ToolTip
+return
+
+ShowHotkeyRuntime(startTick)
+{
+    elapsedMs := A_TickCount - startTick
+    elapsedSec := Round(elapsedMs / 1000.0, 2)
+    ToolTip, Hotkey Runtime: %elapsedSec% seconds
+    SetTimer, HideRuntimeTooltip, -4000
+}
+
+HideRuntimeTooltip:
     ToolTip
 return
 

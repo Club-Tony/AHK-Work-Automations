@@ -81,7 +81,7 @@ Enter::
     MouseMove, 925, 850
     Sleep 250
     MouseClick, left, , , 2
-    Tooltip, Use Ctrl+Enter after entering alias
+    Tooltip, Type alias and hit Ctrl+Enter to continue script
     Sleep, 5000  ; shows for 5 seconds
     Tooltip  ; removes it
 Return

@@ -162,7 +162,9 @@ Alt+1  - Focus "# of Packages"
 Alt+2  - Focus Package Type
 Alt+L  - Click Load button
 Alt+C  - Clear/Reset
+Ctrl+Alt+Enter - Quick submit (scroll bottom + submit)
 Ctrl+W - Close open tabs (bulk prompt)
+Ctrl+Alt+N - Focus Name field (recipient)
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %tooltipText%
@@ -245,6 +247,32 @@ return
 ~!2::Gosub HideTooltips
 #If
 
+; Slack shortcuts when Slack is active
+#IfWinActive, ahk_exe slack.exe
+^!t::
+    if (TooltipActive) {
+        Gosub, HideTooltips
+        Return
+    }
+    TooltipActive := true
+    tooltipText =
+    (
+Slack Hotkeys
+Alt+1 - leona-array
+Alt+2 - sps-byod
+Ctrl+Alt+T - Show this tooltip again
+    )
+    Tooltip, %tooltipText%
+    Hotkey, Esc, HideTooltips, On
+    SetTimer, HideTooltips, -15000
+return
+#If
+
+#If (TooltipActive && WinActive("ahk_exe slack.exe"))
+~!1::Gosub HideTooltips
+~!2::Gosub HideTooltips
+#If
+
 ; Intra Window Switch hotkeys (global trigger, guarded against other tooltip scopes)
 ^!t::
     ; Skip if another tooltip scope should own ^!t
@@ -279,6 +307,9 @@ Win+I - Focus/Minimize all Intra windows
 Win+Alt+M - Minimize all, then focus Firefox, Outlook PWA, Slack
 Ctrl+Alt+W - Intra Desktop Window Organizing
 Ctrl+Alt+T - Show this tooltip again
+Slack Hotkeys:
+Alt+1 - leona-array
+Alt+2 - sps-byod
     )
     Tooltip, %tooltipText%
     Hotkey, Esc, HideTooltips, On

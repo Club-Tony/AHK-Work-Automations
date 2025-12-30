@@ -4,6 +4,7 @@
 #SingleInstance, Force  ; Reload without prompt when Esc is pressed.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+searchShortcutsPath := A_ScriptDir "\Intra_Desktop_Search_Shortcuts.ahk"
 
 ; Window Coordinates (Intra Desktop Client - Assign Recip):
 ; Window Position: x: -7 y: 0 w: 1322 h: 1339
@@ -90,7 +91,75 @@ SetKeyDelay 150
     Sleep 250
     MouseClick, left, 725, 190, 2
     Sleep 250
+    ToolTip, Scan parent label to continue script
+    changed := false
+    initialCaptured := false
+    initialText := ""
+    focusedCtrl := ""
+    Loop 150  ; ~30 seconds total at 200 ms intervals
+    {
+        Sleep 200
+        ControlGetFocus, loopFocus, A
+        if (loopFocus = "")
+            continue
+        if (!initialCaptured)
+        {
+            ControlGetText, initialText, %loopFocus%, A
+            focusedCtrl := loopFocus
+            initialCaptured := true
+            continue
+        }
+        ControlGetText, newText, %focusedCtrl%, A
+        if (newText != initialText && newText != "")
+        {
+            changed := true
+            break
+        }
+    }
+    if (!changed)
+    {
+        ToolTip, BYOD script timed out waiting for scan
+        Sleep 4000
+        ToolTip
+        ExitApp
+    }
+    ToolTip  ; clear scan prompt on success
+
+    Sleep 2000  ; allow the scan input to finish
+    SendInput, ^f
+    WinWait, Search - General,, 3
+    if (!ErrorLevel)
+    {
+        WinActivate, Search - General
+        WinWaitActive, Search - General,, 2
+        Sleep 400
+        running := EnsureSearchShortcutsScript()
+        if (running)
+        {
+            SendInput, !d  ; trigger docksided preset via search shortcuts script
+            Sleep 800
+        }
+        else
+        {
+            ; Fallback: click Load Saved Search and Docksided preset directly.
+            MouseClick, left, 120, 720  ; Load Saved Search
+            Sleep 400
+            MouseClick, left, 200, 600  ; Docksided preset
+            Sleep 400
+        }
+    }
     ExitApp
 Return
+
+EnsureSearchShortcutsScript()
+{
+    global searchShortcutsPath
+    DetectHiddenWindows, On
+    running := WinExist("Intra_Desktop_Search_Shortcuts.ahk ahk_class AutoHotkey")
+    if (!running && FileExist(searchShortcutsPath))
+        Run, %searchShortcutsPath%
+    DetectHiddenWindows, Off
+    return running || WinExist("Intra_Desktop_Search_Shortcuts.ahk ahk_class AutoHotkey")
+}
 
 #IfWinActive
