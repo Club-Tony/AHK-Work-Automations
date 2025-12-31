@@ -20,15 +20,20 @@
 - **Intra_Update_Tab_Shortcuts** — shortcuts for desktop client's Update tab navigation/actions
 - **IntraWinArrange** — arranges and snaps desktop client's windows to preset layouts
 - **Resize_Intra_Search_Window** — auto-resizes the desktop client's search window results for better visibility
-- **Right Click** — helper script for context/right-click actions (Reprinting labels for searched items/sending to manifest)
+- **Right Click** — helper script for context/right-click actions (Reprinting labels for searched items/sending to manifest) [Note: "Use the Print screen key to open screen capture" must be toggled off in Windows settings]
 - **Slack_Shortcuts** — custom Slack navigation and messaging hotkeys [Focused script - replace send strings with your own] 
 - **ToolTips** — displays Shortcuts/Hotkeys tooltips related to currently active window
 - **UPS_WS_Shortcuts** — UPS workspace task shortcuts and macros
 - **Window_Switch** — quick window switching/focusing/minimizing for various windows and programs
 - **Yellow_Pouch** — shortcuts/macros for Yellow Pouch workflows
 ---
-## Run 'Launcher Script (Keybinds)' to launch certain scripts with Hotkeys 
-### Hotkeys:
+## Essential Hotkeys:
 #### -Ctrl+Alt+T = ToolTips (Displays relevant Hotkey Menus depending on currently active window)
 #### -Esc key = Exit certain launched scripts + Stop automations early
 #### -Ctrl+Esc = Reloads all scripts + Stop automations early
+## Run 'Launcher Script (Keybinds)' to launch certain scripts with Hotkeys:
+#### -Ctrl+Alt+C - Launch DSRF-to-UPS_WS Script for shipping request form to UPS WorldShip field transfer automation
+#### -Ctrl+Alt+I - Launch SSJ desktop client scripts bundle
+#### -Ctrl+Alt+F - Launch/reload Search shortcuts script and show search hotkey tooltip
+## Other Hotkeys: 
+#### -Ctrl+Shift+Alt+C - Launch Window Coordinate Capture Helper and show click-to-capture tooltip
