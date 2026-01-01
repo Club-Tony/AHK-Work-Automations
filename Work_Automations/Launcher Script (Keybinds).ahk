@@ -24,6 +24,10 @@ SetTimer, DetectFastAssignClosed, 1000
     ShowTooltip("Coord Helper: Click to capture", 4000)
 return
 
+^+!o::
+    ToggleCoordTxt()
+return
+
 ; Launch: Smartsheets ; Keybind: Ctrl+Alt+L
 ^!l:: 
     Run, C:\Users\daveyuan\Documents\GitHub\Repositories\AHK-Automations\Work_Automations\Daily_Audit.ahk ; Keybind: Ctrl+Alt+D
@@ -263,6 +267,31 @@ CloseWorldShipScripts()
         Process, Close, %pidLegacy%
     DetectHiddenWindows, Off
     SetTitleMatchMode, 1
+}
+
+ToggleCoordTxt()
+{
+    capturePath := "C:\Users\daveyuan\Documents\GitHub\Repositories\AHK-Automations\Other_Automations\Coordinate Capture Helper\coord.txt"
+    captureTitle := "coord.txt - Notepad"
+    DetectHiddenWindows, On
+    hwnd := WinExist(captureTitle)
+    DetectHiddenWindows, Off
+    if (hwnd)
+    {
+        if (WinActive("ahk_id " hwnd))
+        {
+            SendInput, ^w  ; Close the active coord.txt tab
+            Sleep 150
+        }
+        else
+        {
+            WinActivate, ahk_id %hwnd%
+            WinWaitActive, ahk_id %hwnd%,, 1
+        }
+        return
+    }
+    Run, notepad.exe "%capturePath%"
+    WinWaitActive, %captureTitle%,, 2
 }
 
 LaunchIntraSearchShortcuts:

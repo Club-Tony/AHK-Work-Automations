@@ -11,6 +11,7 @@ posterMsgId := 0x5555
 OnMessage(posterMsgId, "HandlePosterMessage")
 interofficeTitle := "Intra: Interoffice Request"
 interofficeExes := ["firefox.exe", "chrome.exe", "msedge.exe"]
+homeTitle := "Intra: Home"
 exportedReportTitle := "ExportedReport.pdf"
 ctrlWRunning := false
 exportedReportTitle := "ExportedReport.pdf"
@@ -92,6 +93,11 @@ return
 return
 
 ^!t::
+return
+
+!h::
+!z::
+    DoAnchorClick()
 return
 
 !1::
@@ -398,6 +404,20 @@ CopyFieldText(scrollPos, xCoord, yCoord)
     return text
 }
 
+DoAnchorClick()
+{
+    EnsureIntraWindow()
+    Sleep 100
+    MouseClick, left, 75, 150, 2
+}
+
+DoHomeAlt1()
+{
+    EnsureHomeWindow()
+    Sleep 100
+    MouseClick, left, 340, 490, 2
+}
+
 GetFieldText(scrollPos, xRatio, yRatio, promptText := "")
 {
     text := CopyFieldText(scrollPos, xRatio, yRatio)
@@ -415,6 +435,15 @@ HideSpecialTooltip()
     Tooltip
 }
 
+EnsureHomeWindow()
+{
+    title := GetHomeWinTitle()
+    if (title = "")
+        return
+    WinActivate, %title%
+    WinWaitActive, %title%,, 1
+}
+
 GetInterofficeWinTitle()
 {
     global interofficeTitle, interofficeExes
@@ -427,9 +456,27 @@ GetInterofficeWinTitle()
     return ""
 }
 
+GetHomeWinTitle()
+{
+    global homeTitle, interofficeExes
+    for _, exe in interofficeExes
+    {
+        candidate := homeTitle " ahk_exe " exe
+        if (WinExist(candidate))
+            return candidate
+    }
+    return ""
+}
+
 IsInterofficeActive()
 {
     title := GetInterofficeWinTitle()
+    return (title != "" && WinActive(title))
+}
+
+IsHomeActive()
+{
+    title := GetHomeWinTitle()
     return (title != "" && WinActive(title))
 }
 
@@ -529,5 +576,12 @@ WaitForCloseTabsChoice()
     }
     return action
 }
+
+#If IsHomeActive()
+!i::
+!z::
+    DoHomeAlt1()
+return
+#If
 
 #IfWinActive
