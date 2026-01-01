@@ -158,6 +158,7 @@ Ctrl+Alt+S - Fill Special Instructions
 Ctrl+Alt+A - ACP preset -> Alias
 Alt+P  - Load "posters" preset -> Name field
 Ctrl+Alt+P - Poster full automation
+Alt+H / Alt+Z - Intra Home anchor click
 Alt+1  - Focus "# of Packages"
 Alt+2  - Focus Package Type
 Alt+L  - Click Load button
@@ -180,6 +181,8 @@ Return
 ~!p::Gosub HideTooltips
 ~^!a::Gosub HideTooltips
 ~^!s::Gosub HideTooltips
+~!h::Gosub HideTooltips
+~!z::Gosub HideTooltips
 ~!1::Gosub HideTooltips
 ~!2::Gosub HideTooltips
 ~!l::Gosub HideTooltips
@@ -217,8 +220,8 @@ return
 ~^!b::Gosub HideTooltips
 #If
 
-; UPS WorldShip shortcuts (UPS_WS_Shortcuts.ahk) when only WorldShip is active
-#If ( WinActive("UPS WorldShip") )
+; UPS WorldShip shortcuts (UPS_WS_Shortcuts.ahk) when WorldShip or QVN window is active
+#If ( WinActive("UPS WorldShip") || WinActive("Quantum View Notify Recipients") )
 ^!t::
     if (TooltipActive) {
         Gosub, HideTooltips
@@ -233,11 +236,19 @@ return
     (
 UPS WorldShip Hotkeys
 Alt+A   - Paste @amazon.com
-Alt+Tab - Jump forward 6 tabs
-Alt+1   - Tab forward 2
-Alt+2   - Tab forward 8
-Alt+P   - Copy Ship To phone -> Ship From phone
 Alt+N   - Copy Ship From company -> Ref2
+Alt+P   - Copy Ship To phone -> Ship From phone
+Alt+D   - Focus Package Weight (double-click)
+Ctrl+Alt+Q - Open QVN Recipients window
+Alt+S   - Open UPS Service Selection
+Alt+Tab - Highlight field || Tab input (6x)
+Alt+1   - Ref1 || Tab input (2x)
+Alt+2   - Ref2 || Tab input (8x)
+Alt+3   - Service: Next Day Air
+Alt+4   - Service: Next Day Air Saver
+Alt+5   - Service: 2nd Day Air
+Alt+6   - Service: 3-Day Select
+Alt+G   - Service: Ground
 Ctrl+Alt+T - Show this tooltip again
     )
     Tooltip, %tooltipText%
@@ -246,11 +257,16 @@ Ctrl+Alt+T - Show this tooltip again
 return
 #If
 
-#If (TooltipActive && WinActive("UPS WorldShip"))
+#If (TooltipActive && (WinActive("UPS WorldShip") || WinActive("Quantum View Notify Recipients")))
 ~!a::Gosub HideTooltips
 ~!Tab::Gosub HideTooltips
 ~!1::Gosub HideTooltips
 ~!2::Gosub HideTooltips
+~!s::Gosub HideTooltips
+~!3::Gosub HideTooltips
+~!g::Gosub HideTooltips
+~!p::Gosub HideTooltips
+~!n::Gosub HideTooltips
 #If
 
 ; Slack shortcuts when Slack is active
@@ -298,6 +314,31 @@ return
 ~!r::Gosub HideTooltips
 #If
 
+; Intra Home window hotkeys
+#IfWinActive, Intra: Home
+^!t::
+    if (TooltipActive) {
+        Gosub, HideTooltips
+        Return
+    }
+    TooltipActive := true
+    tooltipText =
+    (
+Intra Home Hotkeys
+Alt+I / Alt+Z - Interoffice Request anchor click (340,490)
+Ctrl+Alt+T - Show this tooltip again
+    )
+    Tooltip, %tooltipText%
+    Hotkey, Esc, HideTooltips, On
+    SetTimer, HideTooltips, -7000
+return
+#If
+
+#If (TooltipActive && WinActive("Intra: Home"))
+~!i::Gosub HideTooltips
+~!z::Gosub HideTooltips
+#If
+
 ; Intra Window Switch hotkeys (global trigger, guarded against other tooltip scopes)
 ^!t::
     ; Skip if another tooltip scope should own ^!t
@@ -307,7 +348,8 @@ return
         || WinActive("Intra Desktop Client - Update")
         || WinActive("Intra Desktop Client - Pickup")
         || WinActive("UPS WorldShip")
-        || WinActive("ahk_exe slack.exe"))
+        || WinActive("ahk_exe slack.exe")
+        || WinActive("Intra: Home"))
         return
     if (TooltipActive) {
         Gosub, HideTooltips
@@ -321,7 +363,7 @@ return
     TooltipActive := true
     tooltipText =
     (
-Intra Window Switch Hotkeys
+Intra Window/Focus/Other Hotkeys
 Win+A / Win+U / Win+P - Focus/Minimize Assign / Update / Pickup
 Win+F - Focus/Minimize Firefox
 Win+S - Focus/Minimize Slack
@@ -331,10 +373,8 @@ Win+Alt+E - Open new Explorer window
 Win+I - Focus/Minimize all Intra windows
 Win+Alt+M - Minimize all, then focus Firefox, Outlook PWA, Slack
 Ctrl+Alt+W - Intra Desktop Window Organizing
+Ctrl+Shift+Alt+O - Toggle coord.txt open/close (Coord Capture helper)
 Ctrl+Alt+T - Show this tooltip again
-Slack Hotkeys:
-Alt+1 - leona-array
-Alt+2 - sps-byod
     )
     Tooltip, %tooltipText%
     Hotkey, Esc, HideTooltips, On

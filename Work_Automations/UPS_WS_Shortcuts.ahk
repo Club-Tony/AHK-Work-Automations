@@ -18,15 +18,27 @@ worldShipTabs.ShipTo  := {x: 47,  y: 162}
 worldShipTabs.ShipFrom := {x: 99,  y: 162}
 worldShipTabs.Service := {x: 323, y: 162}
 worldShipFields := {}
-worldShipFields.STPhone := {x: 85,  y: 485}  ; Ship To Phone
-worldShipFields.SFPhone := {x: 85,  y: 485}  ; Ship From Phone (same coords)
-worldShipFields.STName  := {x: 85,  y: 280}  ; Attention / Name
-worldShipFields.Company := {x: 78,  y: 241}  ; Company (Ship From)
-worldShipFields.Ref2    := {x: 721, y: 345}  ; Reference 2
+worldShipFields.STPhone := {x: 85,  y: 485}   ; Ship To Phone
+worldShipFields.SFPhone := {x: 85,  y: 485}   ; Ship From Phone (same coords)
+worldShipFields.STName  := {x: 85,  y: 280}   ; Attention / Name
+worldShipFields.Company := {x: 78,  y: 241}   ; Company (Ship From)
+worldShipFields.Ref1    := {x: 728, y: 308}   ; Reference 1
+worldShipFields.Ref2    := {x: 731, y: 347}   ; Reference 2
+worldShipFields.Weight  := {x: 346, y: 535}   ; Package weight field
+worldShipServiceMenu := {}
+worldShipServiceMenu.Selection := {x: 400, y: 231}       ; UPS Service Selection dropdown
+worldShipServiceMenu.NextDayAir := {x: 400, y: 262}
+worldShipServiceMenu.NextDayAirSaver := {x: 400, y: 278}
+worldShipServiceMenu.SecondDayAir := {x: 400, y: 308}
+worldShipServiceMenu.ThreeDaySelect := {x: 400, y: 323}
+worldShipServiceMenu.Ground := {x: 400, y: 338}
+worldShipTabs.Options := {x: 372, y: 162}
+worldShipTabs.QVN := {x: 381, y: 282}
+worldShipTabs.Recipients := {x: 560, y: 253}
 
 ^Esc::Reload
 
-#If (WinActive(worldShipTitle) || WinActive(qvnTitle))
+#If WinActive(worldShipTitle)
 ~Alt::
     Sleep 250
 return
@@ -39,6 +51,112 @@ return
     SendInput, @amazon.com
 return
 
+!1::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipFields.Ref1.x, % worldShipFields.Ref1.y
+return
+
+!2::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipFields.Ref2.x, % worldShipFields.Ref2.y
+return
+
+; Alt+Tab: highlight current field (End, then Ctrl+Shift+Home)
+$!Tab::
+    Send, {Alt up}
+    SendInput, {End}
+    Sleep 50
+    SendInput, ^+{Home}
+return
+
+!s::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+return
+
+^!q::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Options.x, % worldShipTabs.Options.y
+    Sleep 150
+    MouseClick, left, % worldShipTabs.QVN.x, % worldShipTabs.QVN.y
+    Sleep 150
+    MouseClick, left, % worldShipTabs.Recipients.x, % worldShipTabs.Recipients.y
+return
+
+!d::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipFields.Weight.x, % worldShipFields.Weight.y, 2
+return
+
+!g::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+    Sleep 250
+    MouseMove, % worldShipServiceMenu.Ground.x, % worldShipServiceMenu.Ground.y
+    Sleep 250
+    MouseClick, left
+return
+
+!3::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+    Sleep 250
+    MouseMove, % worldShipServiceMenu.NextDayAir.x, % worldShipServiceMenu.NextDayAir.y
+    Sleep 250
+    MouseClick, left
+return
+
+!4::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+    Sleep 250
+    MouseMove, % worldShipServiceMenu.NextDayAirSaver.x, % worldShipServiceMenu.NextDayAirSaver.y
+    Sleep 250
+    MouseClick, left
+return
+
+!5::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+    Sleep 250
+    MouseMove, % worldShipServiceMenu.SecondDayAir.x, % worldShipServiceMenu.SecondDayAir.y
+    Sleep 250
+    MouseClick, left
+return
+
+!6::
+    SendInput, {Alt up}
+    MouseClick, left, % worldShipTabs.Service.x, % worldShipTabs.Service.y
+    Sleep 50
+    MouseClick, left, % worldShipServiceMenu.Selection.x, % worldShipServiceMenu.Selection.y
+    Sleep 250
+    MouseMove, % worldShipServiceMenu.ThreeDaySelect.x, % worldShipServiceMenu.ThreeDaySelect.y
+    Sleep 250
+    MouseClick, left
+return
+#If
+
+#If WinActive(qvnTitle)
+~Alt::
+    Sleep 250
+return
+
 $!Tab::
     Send, {Alt up}
     Loop 6
@@ -46,6 +164,14 @@ $!Tab::
         SendInput, {Tab}
         Sleep 25
     }
+return
+
+!a::
+    ; Allow @amazon.com paste in QVN window too.
+    SendInput, {Alt up}
+    KeyWait, Alt
+    Sleep 50
+    SendInput, @amazon.com
 return
 
 !1::

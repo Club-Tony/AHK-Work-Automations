@@ -21,11 +21,40 @@ Return
 Return
 
 ^+!c::
-    Run, "C:\Users\daveyuan\Documents\GitHub\Repositories\AHK-Automations\Other_Automations\Coordinate Capture Helper\Coord_Capture.ahk"
+    Run, "C:\Users\Davey\Documents\GitHub\Repositories\AHK-Automations\Other_Automations\Coordinate Capture Helper\Coord_Capture.ahk"
     ToolTip, Coord Helper: Click to capture
     SetTimer, HideCoordTip, -4000
+Return
+
+^+!o::
+    ToggleCoordTxt()
 Return
 
 HideCoordTip:
     ToolTip
 Return
+
+ToggleCoordTxt()
+{
+    capturePath := "C:\Users\Davey\Documents\GitHub\Repositories\AHK-Automations\Other_Automations\Coordinate Capture Helper\coord.txt"
+    captureTitle := "coord.txt - Notepad"
+    DetectHiddenWindows, On
+    hwnd := WinExist(captureTitle)
+    DetectHiddenWindows, Off
+    if (hwnd)
+    {
+        if (WinActive("ahk_id " hwnd))
+        {
+            SendInput, ^w  ; Close the active coord.txt tab
+            Sleep 150
+        }
+        else
+        {
+            WinActivate, ahk_id %hwnd%
+            WinWaitActive, ahk_id %hwnd%,, 1
+        }
+        return
+    }
+    Run, notepad.exe "%capturePath%"
+    WinWaitActive, %captureTitle%,, 2
+}
