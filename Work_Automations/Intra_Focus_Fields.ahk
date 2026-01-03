@@ -50,6 +50,14 @@ Return
         Sleep 50
     }
     Sleep 200
+    MouseClick, left, 966, 834
+    Loop, 10
+    {
+        MouseClick, WheelDown
+    }
+    Sleep 100
+    MouseClick, left, 882, 873
+    Sleep 150
     MouseClick, left, 200, 245, 2  ; return focus to scan field
 Return
 
