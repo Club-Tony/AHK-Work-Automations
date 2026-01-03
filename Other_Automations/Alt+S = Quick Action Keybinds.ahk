@@ -12,6 +12,8 @@ ClickMode := false
 ; Prepare / hotkey (disabled until the toggle is turned on)
 Hotkey, $/, SlashClick, Off
 
+^Esc::Reload
+
 !s::
     ClickMode := !ClickMode
     if (ClickMode) {

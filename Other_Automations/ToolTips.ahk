@@ -19,6 +19,9 @@ TooltipActive := false
     TooltipActive := true
     tooltipText =
     (
+Global Hotkeys:
+Ctrl+Shift+Alt+Z - Launch Macros script
+-
 Window Switch (Personal)
 Win+E       - Focus/Minimize/Cycle Explorer
 Win+Alt+E   - Open new Explorer window
@@ -43,4 +46,5 @@ return
 ~#!v::Gosub HideTooltips
 ~#f::Gosub HideTooltips
 ~^!t::Gosub HideTooltips
+~^+!z::Gosub HideTooltips
 #If

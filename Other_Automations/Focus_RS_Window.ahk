@@ -1,9 +1,11 @@
 #Requires AutoHotkey v1
 #NoEnv ; Prevents Unnecessary Environment Variable lookup
 #Warn ; Warn All (All Warnings Enabled)
-#SingleInstance, Force ; auto-reloads script when making changes
+#SingleInstance, Force ; Removes script already open warning when reloading scripts
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
+
+^Esc::Reload
 
 Esc::ExitApp
 

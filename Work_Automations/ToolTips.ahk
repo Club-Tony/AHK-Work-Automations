@@ -57,6 +57,7 @@ Ctrl+Alt+F - Launch Intra Search Shortcuts
 Ctrl+Alt+I - Launch Intra Extensive Automations
 Ctrl+Alt+C - Launch DSRF to WorldShip Script
 Ctrl+Alt+L - Launch Daily Audit + Smartsheet
+Ctrl+Shift+Alt+Z - Launch Macros script
 Ctrl+Alt+W - Intra Desktop Window Organizing
 Ctrl+Alt+T - Show this tooltip again
     )

@@ -25,7 +25,7 @@ SetTimer, DetectFastAssignClosed, 1000
 return
 
 ^+!o::
-    ToggleCoordTxt()
+    Run, "C:\Users\daveyuan\Documents\GitHub\Repositories\AHK-Automations\Other_Automations\Coordinate Capture Helper\coord.txt"
 return
 
 ; Launch: Smartsheets ; Keybind: Ctrl+Alt+L

@@ -3,6 +3,8 @@
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 
+^Esc::Reload
+
 lastAltATick := 0
 
 !a::
