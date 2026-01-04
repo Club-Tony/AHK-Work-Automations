@@ -21,6 +21,7 @@ TooltipActive := false
     (
 Global Hotkeys:
 Ctrl+Shift+Alt+Z - Launch Macros script
+Ctrl+Shift+Alt+C - Launch Coord Capture Helper script
 -
 Window Switch (Personal)
 Win+E       - Focus/Minimize/Cycle Explorer
